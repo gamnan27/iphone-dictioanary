@@ -1,0 +1,2512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Polyglot Studio</title>
+
+<!-- iOS Home Screen Web App Meta -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Polyglot">
+
+<!-- Android / Chrome PWA Meta -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Polyglot">
+<meta name="theme-color" content="#e51937">
+<meta name="format-detection" content="telephone=no">
+
+<link id="apple-icon" rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+<link id="app-icon" rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link id="app-manifest" rel="manifest" href="manifest.json">
+
+<style>
+:root{
+  color-scheme:light;
+  --bg:#ffffff;
+  --surf:#ffffff;
+  --surf-2:#f7f8fa;
+  --tx:#3c3c3c;
+  --tx-dark:#18181b;
+  --mu:#6b7280;
+  --ac:#e51937;
+  --ac-dark:#b81028;
+  --ac-light:#fff1f3;
+  --ac-border:#fecdd3;
+  --bd:#e5e7eb;
+  --bd-dark:#d1d5db;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Nunito","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*,*::before,*::after{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-touch-callout:none;
+}
+html{
+  margin:0;padding:0;width:100%;min-height:100%;
+  background:var(--bg);
+}
+body{
+  margin:0;padding:0;width:100%;min-height:100dvh;
+  overflow-x:hidden;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  background:var(--bg);color:var(--tx);
+  font-family:var(--font);
+  line-height:1.4;
+  -webkit-font-smoothing:antialiased;
+  -webkit-text-size-adjust:100%;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:calc(88px + env(safe-area-inset-bottom,0px));
+}
+svg.ico{
+  width:17px;height:17px;flex:none;
+  stroke:currentColor;fill:none;
+  stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;
+  vertical-align:middle;
+}
+.nav-tab svg.ico{width:20px;height:20px}
+
+/* Top Sticky Header */
+.duo-top{
+  position:sticky;top:0;z-index:50;
+  background:rgba(255,255,255,0.96);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1.5px solid var(--bd);
+  padding:8px 12px;
+}
+.duo-top-in{
+  max-width:680px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+.duo-hud-stats{
+  display:flex;align-items:center;gap:6px;
+  font-weight:800;font-size:13px;flex-shrink:0;
+}
+.hud-item{
+  display:inline-flex;align-items:center;gap:4px;
+  background:var(--ac-light);color:var(--ac);
+  border:1.5px solid var(--ac-border);
+  border-radius:10px;padding:5px 8px;
+  font-size:12px;font-weight:800;white-space:nowrap;
+}
+
+/* Main Layout Container */
+.w{
+  width:100%;max-width:680px;
+  margin:0 auto;padding:12px 12px 28px;
+}
+
+/* Base Tactile Button */
+button{
+  font:inherit;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  background:#ffffff;color:var(--tx-dark);
+  border:1.5px solid var(--bd);border-bottom-width:3px;
+  border-radius:14px;padding:10px 14px;
+  font-size:14px;font-weight:800;line-height:1.2;
+  min-height:42px;
+  touch-action:pan-x pan-y;
+  transition:transform .06s ease,background .12s ease,border-color .12s ease;
+}
+button:hover:not(:disabled){background:var(--surf-2);border-color:var(--bd-dark)}
+button:active:not(:disabled){transform:translateY(1.5px);border-bottom-width:1.5px}
+button:disabled{opacity:.45;cursor:not-allowed}
+
+button.primary,button.on{
+  background:var(--ac);color:#ffffff;
+  border-color:var(--ac-dark);
+}
+button.primary:hover:not(:disabled),button.on:hover:not(:disabled){
+  background:#d61532;border-color:var(--ac-dark);
+}
+button.outline-red{
+  background:#ffffff;color:var(--ac);
+  border-color:var(--ac-border);
+}
+button.outline-red:hover:not(:disabled){background:var(--ac-light);border-color:var(--ac)}
+button.sm{
+  font-size:12.5px;padding:6px 10px;
+  border-radius:11px;border-bottom-width:2.5px;min-height:34px;
+}
+
+.duo-lang-pill{
+  padding:6px 10px;border-radius:12px;min-height:36px;
+  font-size:13px;white-space:nowrap;
+}
+.swap-btn{
+  padding:6px 9px;border-radius:12px;min-height:36px;min-width:36px;
+}
+
+/* Bottom Navigation Bar */
+.duo-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:60;
+  background:rgba(255,255,255,0.98);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-top:1.5px solid var(--bd);
+  padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));
+}
+.duo-nav-in{
+  max-width:680px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;
+}
+.nav-tab{
+  border:1.5px solid transparent;border-bottom-width:1.5px;
+  background:transparent;color:var(--mu);
+  border-radius:12px;padding:6px 2px;min-height:50px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  font-size:10.5px;font-weight:800;white-space:nowrap;overflow:hidden;
+}
+.nav-tab .ic{display:flex;align-items:center;justify-content:center;height:21px}
+.nav-tab:hover{background:var(--surf-2);border-color:transparent}
+.nav-tab.on{
+  background:var(--ac-light);color:var(--ac);border-color:var(--ac-border);
+}
+
+/* Level Selector Grid */
+.lvl-bar{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px;
+}
+.lvl-btn{
+  flex-direction:column;gap:2px;
+  padding:8px 6px;min-height:50px;border-radius:14px;
+  background:#ffffff;border:1.5px solid var(--bd);border-bottom-width:3px;
+}
+.lvl-btn.on{background:var(--ac-light);border-color:var(--ac);color:var(--ac)}
+.lvl-btn b{display:block;font-size:13px;line-height:1.2}
+.lvl-btn span{display:block;font-size:11px;font-weight:700;opacity:.8}
+
+/* Category Filter Chips */
+.cats{
+  display:flex;gap:6px;overflow-x:auto;
+  padding:2px 0 8px;margin-bottom:10px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;
+}
+.cats::-webkit-scrollbar{display:none}
+.cat-chip{
+  flex:0 0 auto;white-space:nowrap;
+  border-radius:999px;padding:6px 13px;
+  font-size:12.5px;font-weight:800;min-height:34px;
+  background:#ffffff;border:1.5px solid var(--bd);border-bottom-width:2.5px;color:var(--tx);
+}
+.cat-chip.on{background:var(--ac);color:#ffffff;border-color:var(--ac-dark)}
+
+/* Flashcard & Practice Cards */
+.duo-card{
+  background:#ffffff;
+  border:1.5px solid var(--bd);border-bottom-width:4px;
+  border-radius:20px;padding:22px 16px;
+  text-align:center;min-height:210px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;
+  cursor:pointer;word-break:break-word;
+}
+.duo-card:hover{border-color:var(--ac-border)}
+.big-word{font-size:28px;font-weight:900;color:var(--tx-dark);line-height:1.25}
+.pron-pill{
+  background:var(--ac-light);color:var(--ac);
+  border:1.5px solid var(--ac-border);
+  border-radius:999px;padding:4px 12px;font-size:13px;font-weight:800;
+}
+.hint{color:var(--mu);font-size:12.5px;font-weight:700;line-height:1.4}
+.row{display:flex;gap:8px;margin-top:10px}
+.row button{flex:1;min-width:0}
+
+/* Multi-Language Bridge Pills */
+.bridge-grid{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin-top:6px;width:100%;
+}
+.bridge-pill{
+  display:inline-flex;align-items:center;gap:4px;
+  background:var(--surf-2);border:1.5px solid var(--bd);
+  border-radius:8px;padding:4px 8px;font-size:11.5px;font-weight:800;color:var(--tx-dark);
+  cursor:pointer;
+}
+.bridge-pill:active{background:var(--ac-light);border-color:var(--ac)}
+
+/* Progress Bar */
+.duo-prog{
+  height:12px;background:var(--bd);border-radius:999px;overflow:hidden;margin:8px 0 12px;
+}
+.duo-prog i{
+  display:block;height:100%;background:var(--ac);border-radius:999px;transition:width .25s ease;
+}
+
+/* Inputs & Boxes */
+.box{
+  background:#ffffff;border:1.5px solid var(--bd);border-bottom-width:3px;
+  border-radius:18px;padding:14px;margin-bottom:12px;
+}
+input,textarea,select{
+  width:100%;font:inherit;font-size:16px !important;font-weight:700;
+  padding:11px 13px;border-radius:12px;
+  border:1.5px solid var(--bd);background:var(--surf-2);color:var(--tx-dark);
+  margin-top:8px;outline:none;-webkit-user-select:text;user-select:text;
+}
+input:focus,textarea:focus,select:focus{border-color:var(--ac);background:#ffffff}
+.text-quiz-input{
+  font-size:19px !important;font-weight:800;text-align:center;
+  padding:13px 14px;border-radius:16px;
+  border:1.5px solid var(--ac-border);border-bottom-width:3px;
+  background:#ffffff;margin-top:10px;
+}
+.fb-sheet{
+  margin-top:10px;padding:12px 14px;border-radius:16px;
+  border:1.5px solid var(--ac);background:var(--ac-light);color:var(--tx-dark);
+}
+.fb-sheet.wrong{border-color:var(--bd-dark);background:var(--surf-2)}
+
+.stat-row{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:10px 0;border-bottom:1.5px solid var(--surf-2);font-size:14px;
+}
+.stat-row:last-child{border-bottom:none}
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;
+  background:var(--ac-light);color:var(--ac);border:1.5px solid var(--ac-border);
+  white-space:nowrap;
+}
+.badge.neutral{background:var(--surf-2);color:var(--mu);border-color:var(--bd)}
+
+/* Interactive Number Converter Box */
+.num-lab{
+  background:var(--surf-2);border:1.5px solid var(--bd);
+  border-radius:16px;padding:12px;margin-bottom:12px;
+}
+.num-presets{
+  display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;
+}
+
+/* Guide Cards & Dialogue Theater */
+.guide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.guide-card{
+  background:#ffffff;border:1.5px solid var(--bd);border-bottom-width:3.5px;
+  border-radius:18px;padding:14px;cursor:pointer;
+  display:flex;flex-direction:column;gap:6px;
+}
+.guide-card:active{transform:translateY(1.5px)}
+.theater-box{
+  background:#ffffff;border:1.5px solid var(--ac);border-bottom-width:4px;
+  border-radius:20px;overflow:hidden;margin-bottom:12px;
+}
+.theater-top{
+  background:var(--ac);color:#ffffff;padding:10px 14px;
+  display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:800;gap:8px;
+}
+.theater-stage{padding:18px 14px;text-align:center;background:#ffffff}
+.tk{cursor:pointer;border-bottom:1.5px dashed var(--ac);padding:0 2px;border-radius:3px}
+.script-line{
+  display:flex;gap:10px;align-items:center;padding:11px 12px;
+  border:1.5px solid var(--bd);border-bottom-width:3px;border-radius:14px;
+  background:#ffffff;cursor:pointer;margin-top:8px;
+}
+.script-line.cur{border-color:var(--ac);background:var(--ac-light)}
+.blur-en{filter:blur(5px);cursor:pointer;transition:filter .15s}
+.blur-en:hover,.blur-en:active{filter:blur(0)}
+
+/* Word Mashup Chips */
+.chip{
+  display:inline-flex;align-items:center;padding:7px 12px;border-radius:12px;
+  background:#ffffff;border:1.5px solid var(--bd);border-bottom-width:3px;
+  font-size:13.5px;font-weight:800;cursor:pointer;margin:3px;
+}
+.chip.used{opacity:.3;pointer-events:none}
+.slot-box{
+  min-height:50px;border:1.5px dashed var(--ac-border);border-radius:14px;
+  padding:8px;background:var(--surf-2);margin:10px 0;
+}
+
+/* AI Tutor Chat */
+.chat-box{
+  background:#ffffff;border:1.5px solid var(--bd);border-bottom-width:4px;
+  border-radius:20px;overflow:hidden;
+}
+.chat-hdr{
+  background:var(--ac);color:#ffffff;padding:11px 14px;
+  display:flex;justify-content:space-between;align-items:center;gap:8px;
+}
+.chat-msgs{
+  padding:12px;max-height:380px;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  display:flex;flex-direction:column;gap:10px;background:var(--surf-2);
+}
+.bubble{
+  max-width:88%;padding:11px 13px;border-radius:16px;font-size:14.5px;line-height:1.45;
+  border:1.5px solid var(--bd);border-bottom-width:3px;background:#ffffff;color:var(--tx-dark);
+}
+.bubble.bot{align-self:flex-start;border-bottom-left-radius:4px}
+.bubble.usr{align-self:flex-end;background:var(--ac);color:#ffffff;border-color:var(--ac-dark);border-bottom-right-radius:4px}
+.bubble-en{font-size:13px;color:var(--tx);margin-top:6px;padding-top:6px;border-top:1px solid var(--surf-2);font-weight:700}
+.bubble-tip{
+  margin-top:6px;padding:7px 10px;border-radius:10px;
+  background:var(--ac-light);color:var(--ac);font-size:12px;font-weight:800;
+}
+.web-sources{margin-top:6px;display:flex;flex-wrap:wrap;gap:5px}
+.web-src-pill{
+  display:inline-flex;align-items:center;gap:4px;
+  background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;
+  border-radius:8px;padding:3px 8px;font-size:11px;font-weight:800;text-decoration:none;
+}
+.chat-chips{
+  padding:8px 10px;background:#ffffff;border-top:1.5px solid var(--bd);
+  display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;
+}
+.chat-chips::-webkit-scrollbar{display:none}
+.chat-bar{
+  padding:8px 10px;background:#ffffff;border-top:1.5px solid var(--bd);
+  display:flex;gap:6px;align-items:center;
+}
+.chat-bar input{margin-top:0;flex:1;min-width:0}
+.mic-btn.rec{background:var(--ac);color:#ffffff;border-color:var(--ac-dark);animation:pulse 1s infinite}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+
+/* Language Pair Matrix Cards */
+.lang-card{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:12px 14px;border-radius:18px;background:#ffffff;
+  border:1.5px solid var(--bd);border-bottom-width:3.5px;margin-bottom:8px;cursor:pointer;
+}
+.lang-card.active{border-color:var(--ac);background:var(--ac-light)}
+.lang-flag-circle{
+  min-width:52px;height:40px;padding:0 8px;border-radius:12px;
+  background:var(--surf-2);border:1.5px solid var(--bd);
+  display:inline-flex;align-items:center;justify-content:center;gap:3px;
+  font-size:17px;flex:none;
+}
+.lang-card.active .lang-flag-circle{background:#ffffff;border-color:var(--ac)}
+
+/* Install Banner & Stats */
+.install-banner{
+  background:var(--ac-light);border:1.5px solid var(--ac-border);border-bottom-width:3px;
+  border-radius:16px;padding:11px 13px;margin-bottom:12px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.tile{
+  background:#ffffff;border:1.5px solid var(--bd);border-bottom-width:3px;
+  border-radius:16px;padding:12px;
+}
+.tile b{display:block;font-size:22px;font-weight:900;color:var(--ac);margin:2px 0}
+.bars{display:flex;gap:8px;align-items:flex-end;height:86px;margin:10px 0 4px}
+.bars div{flex:1;text-align:center;font-size:11.5px;font-weight:800;color:var(--mu);display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.bars i{display:block;background:var(--ac);border-radius:6px 6px 0 0;min-height:6px}
+</style>
+</head>
+<body>
+<div id="ios-quicklook-tip" style="background:#fff0f2;border-bottom:2px solid #ffc2cb;color:#b81028;padding:8px 14px;font-size:12px;font-weight:800;text-align:center">
+  ⏳ Loading Polyglot Studio…
+</div>
+
+<!-- Top HUD -->
+<header class="duo-top">
+  <div class="duo-top-in">
+    <div style="display:flex;align-items:center;gap:6px">
+      <button class="duo-lang-pill" id="hud-lang" onclick="go('langs')" title="All 30 Language Pairs">
+        <span id="hud-flag">🇵🇱</span>
+        <span id="hud-pair">EN → PL</span>
+        <span style="color:var(--ac);font-size:10px">▼</span>
+      </button>
+      <button class="swap-btn outline-red" onclick="swapOppositeLanguage()" title="Switch to Opposite Direction" aria-label="Swap Direction">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4 4 4M17 8v12m0 0 4-4m-4 4-4-4"/></svg>
+      </button>
+    </div>
+    <div class="duo-hud-stats">
+      <span class="hud-item" id="hud-strk">0d</span>
+      <span class="hud-item" id="hud-xp">0 XP</span>
+      <button class="sm outline-red" onclick="go('stats')" title="Stats & App Install" aria-label="Stats">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Main Workspace -->
+<main class="w">
+  <div id="pwa-banner-wrap"></div>
+  <div id="lv-wrap"></div>
+  <div id="cat-wrap"></div>
+  <div id="main"></div>
+</main>
+
+<!-- Bottom Tab Navigation -->
+<nav class="duo-nav" aria-label="Primary Navigation">
+  <div class="duo-nav-in" id="bottom-nav"></div>
+</nav>
+
+<script>
+window.onerror=function(msg,src,line){
+  var m=document.getElementById('main');
+  if(m&&!m.innerHTML.trim())m.innerHTML='<div class="box"><b>Error:</b> '+msg+' (line '+line+')</div>';
+};
+</script>
+<script>
+const _MEM_STORE={};
+const safeStore={
+  get(k){
+    if(Object.prototype.hasOwnProperty.call(_MEM_STORE,k))return _MEM_STORE[k];
+    try{const v=window.localStorage.getItem(k);if(v!==null)_MEM_STORE[k]=v;return v}catch(e){return null}
+  },
+  set(k,v){
+    _MEM_STORE[k]=String(v);
+    try{window.localStorage.setItem(k,String(v))}catch(e){}
+  }
+};
+const $=id=>document.getElementById(id);
+const esc=t=>String(t||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+const cl=(s,n)=>String(s||"").replace(/\s+/g," ").trim().slice(0,n||80);
+const norm=s=>String(s||"").toLowerCase().replace(/ł/g,"l").replace(/ı/g,"i").replace(/ß/g,"ss").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9 ]/g,"").trim();
+function sh(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+
+/* Safe Unicode-compatible word tokenizer (works on ALL iOS & Android WebViews without white-screen regex crashes) */
+const WORD_RE=/[A-Za-zÀ-ÖØ-öø-ÿĀ-žİıŞşĞğÇçÖöÜüŁłĄąĆćĘęŃńÓóŚśŹźŻż]+/g;
+const wl=t=>String(t||"").replace(WORD_RE,w=>`<span class="tk" onclick="event.stopPropagation();selW('${w.replace(/'/g,"")}')">${w}</span>`);
+
+/* ===== PWA Icon, Manifest & Service Worker Setup for iPhone & Android ===== */
+let DEFERRED_PROMPT=null;
+window.addEventListener("beforeinstallprompt",e=>{
+  e.preventDefault();
+  DEFERRED_PROMPT=e;
+  render();
+});
+
+(function initMobilePWA(){
+  try{
+    if($("app-manifest")&&$("app-manifest").getAttribute("href"))return;
+    const c=document.createElement("canvas");
+    c.width=192;c.height=192;
+    const ctx=c.getContext("2d");
+    ctx.fillStyle="#e51937";
+    ctx.fillRect(0,0,192,192);
+    ctx.fillStyle="#ffffff";
+    ctx.font="bold 96px -apple-system, BlinkMacSystemFont, sans-serif";
+    ctx.textAlign="center";
+    ctx.textBaseline="middle";
+    ctx.fillText("P",96,102);
+    const pngUrl=c.toDataURL("image/png");
+    if($("apple-icon"))$("apple-icon").href=pngUrl;
+    if($("app-icon"))$("app-icon").href=pngUrl;
+
+    const manifest={
+      name:"Polyglot Studio",
+      short_name:"Polyglot",
+      start_url:"./",
+      display:"standalone",
+      background_color:"#ffffff",
+      theme_color:"#e51937",
+      orientation:"portrait",
+      icons:[
+        {src:pngUrl,sizes:"192x192",type:"image/png"},
+        {src:pngUrl,sizes:"512x512",type:"image/png"}
+      ]
+    };
+    if($("app-manifest"))$("app-manifest").href="data:application/manifest+json;charset=utf-8,"+encodeURIComponent(JSON.stringify(manifest));
+  }catch(e){}
+})();
+
+/* ===== 6 Core Languages & Full 30 Bi-Directional Matrix ===== */
+const LANG_META={
+  pl:{code:"pl",speech:"pl-PL",flag:"🇵🇱",name:"Polish",native:"Polski",greet:"Cześć!",coach:"Zofia"},
+  tr:{code:"tr",speech:"tr-TR",flag:"🇹🇷",name:"Turkish",native:"Türkçe",greet:"Merhaba!",coach:"Elif"},
+  en:{code:"en",speech:"en-US",flag:"🇬🇧",name:"English",native:"English",greet:"Hello!",coach:"Oliver"},
+  fr:{code:"fr",speech:"fr-FR",flag:"🇫🇷",name:"French",native:"Français",greet:"Bonjour !",coach:"Camille"},
+  de:{code:"de",speech:"de-DE",flag:"🇩🇪",name:"German",native:"Deutsch",greet:"Hallo!",coach:"Lukas"},
+  es:{code:"es",speech:"es-ES",flag:"🇪🇸",name:"Spanish",native:"Español",greet:"¡Hola!",coach:"Sofía"}
+};
+
+const LANG_PAIRS={};
+Object.keys(LANG_META).forEach(src=>{
+  Object.keys(LANG_META).forEach(tgt=>{
+    if(src===tgt)return;
+    const s=LANG_META[src],t=LANG_META[tgt];
+    const id=`${src}-${tgt}`;
+    LANG_PAIRS[id]={
+      id,src,tgt,
+      short:`${src.toUpperCase()} → ${tgt.toUpperCase()}`,
+      label:`${t.name} (for ${s.name} Speakers)`,
+      srcName:s.name,tgtName:t.name,
+      srcCode:s.speech,tgtCode:t.speech,
+      flag:t.flag,srcFlag:s.flag,
+      greet:t.greet,
+      coach:`${t.coach} (${t.name} AI Tutor)`
+    };
+  });
+});
+
+let CUR_PAIR="en-pl";
+let CUSTOM_PAIRS={};
+try{
+  const savedP=safeStore.get("app-lang-pair");
+  if(savedP&&LANG_PAIRS[savedP])CUR_PAIR=savedP;
+  CUSTOM_PAIRS=JSON.parse(safeStore.get("app-custom-pairs")||"{}");
+}catch(e){}
+
+function getAllPairs(){return{...LANG_PAIRS,...CUSTOM_PAIRS}}
+function getActivePair(){const allP=getAllPairs();return allP[CUR_PAIR]||allP["en-pl"]}
+
+function swapOppositeLanguage(){
+  const ap=getActivePair();
+  if(ap.src&&ap.tgt){
+    const opp=`${ap.tgt}-${ap.src}`;
+    if(getAllPairs()[opp]){
+      selectLanguagePair(opp);
+      return;
+    }
+  }
+  go("langs");
+}
+
+function speak(t,r,langOverride){
+  try{
+    const u=new SpeechSynthesisUtterance(t);
+    u.lang=langOverride||getActivePair().tgtCode||"pl-PL";
+    u.rate=r||0.9;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+const say=el=>speak(el.dataset.t,0.9,el.dataset.lang||null);
+
+/* ===== Intertwined 6-Language Core Concepts (Aligned Across PL, TR, EN, FR, DE, ES) ===== */
+const CORE_CONCEPTS=[
+  {lv:"A1",cat:"Basics & Greetings",pl:"Cześć",tr:"Merhaba",en:"Hello",fr:"Bonjour",de:"Hallo",es:"Hola"},
+  {lv:"A1",cat:"Basics & Greetings",pl:"Dzień dobry",tr:"Günaydın",en:"Good morning",fr:"Bonjour",de:"Guten Morgen",es:"Buenos días"},
+  {lv:"A1",cat:"Basics & Greetings",pl:"Dobry wieczór",tr:"İyi akşamlar",en:"Good evening",fr:"Bonsoir",de:"Guten Abend",es:"Buenas tardes"},
+  {lv:"A1",cat:"Basics & Greetings",pl:"Dobranoc",tr:"İyi geceler",en:"Good night",fr:"Bonne nuit",de:"Gute Nacht",es:"Buenas noches"},
+  {lv:"A1",cat:"Basics & Greetings",pl:"Do widzenia",tr:"Hoşça kal",en:"Goodbye",fr:"Au revoir",de:"Auf Wiedersehen",es:"Adiós"},
+  {lv:"A1",cat:"Basics & Greetings",pl:"Dziękuję",tr:"Teşekkür ederim",en:"Thank you",fr:"Merci",de:"Danke",es:"Gracias"},
+  {lv:"A1",cat:"Basics & Greetings",pl:"Proszę",tr:"Lütfen",en:"Please",fr:"S'il vous plaît",de:"Bitte",es:"Por favor"},
+  {lv:"A1",cat:"Basics & Greetings",pl:"Przepraszam",tr:"Affedersiniz",en:"Excuse me",fr:"Excusez-moi",de:"Entschuldigung",es:"Perdón"},
+  {lv:"A1",cat:"Basics & Greetings",pl:"Tak",tr:"Evet",en:"Yes",fr:"Oui",de:"Ja",es:"Sí"},
+  {lv:"A1",cat:"Basics & Greetings",pl:"Nie",tr:"Hayır",en:"No",fr:"Non",de:"Nein",es:"No"},
+  {lv:"A1",cat:"Basics & Greetings",pl:"Jak się masz?",tr:"Nasılsın?",en:"How are you?",fr:"Comment ça va ?",de:"Wie geht es dir?",es:"¿Cómo estás?"},
+  {lv:"A1",cat:"Basics & Greetings",pl:"Miło mi",tr:"Memnun oldum",en:"Nice to meet you",fr:"Enchanté",de:"Freut mich",es:"Mucho gusto"},
+  {lv:"A1",cat:"Food & Drink",pl:"woda",tr:"su",en:"water",fr:"l'eau",de:"das Wasser",es:"el agua"},
+  {lv:"A1",cat:"Food & Drink",pl:"chleb",tr:"ekmek",en:"bread",fr:"le pain",de:"das Brot",es:"el pan"},
+  {lv:"A1",cat:"Food & Drink",pl:"kawa",tr:"kahve",en:"coffee",fr:"le café",de:"der Kaffee",es:"el café"},
+  {lv:"A1",cat:"Food & Drink",pl:"herbata",tr:"çay",en:"tea",fr:"le thé",de:"der Tee",es:"el té"},
+  {lv:"A1",cat:"Food & Drink",pl:"mleko",tr:"süt",en:"milk",fr:"le lait",de:"die Milch",es:"la leche"},
+  {lv:"A1",cat:"Food & Drink",pl:"ser",tr:"peynir",en:"cheese",fr:"le fromage",de:"der Käse",es:"el queso"},
+  {lv:"A1",cat:"Food & Drink",pl:"jabłko",tr:"elma",en:"apple",fr:"la pomme",de:"der Apfel",es:"la manzana"},
+  {lv:"A1",cat:"Food & Drink",pl:"zupa",tr:"çorba",en:"soup",fr:"la soupe",de:"die Suppe",es:"la sopa"},
+  {lv:"A1",cat:"Food & Drink",pl:"mięso",tr:"et",en:"meat",fr:"la viande",de:"das Fleisch",es:"la carne"},
+  {lv:"A1",cat:"Food & Drink",pl:"ryba",tr:"balık",en:"fish",fr:"le poisson",de:"der Fisch",es:"el pescado"},
+  {lv:"A1",cat:"Food & Drink",pl:"jajko",tr:"yumurta",en:"egg",fr:"l'œuf",de:"das Ei",es:"el huevo"},
+  {lv:"A1",cat:"Food & Drink",pl:"rachunek",tr:"hesap",en:"bill",fr:"l'addition",de:"die Rechnung",es:"la cuenta"},
+  {lv:"A1",cat:"Travel & Places",pl:"dworzec",tr:"tren garı",en:"train station",fr:"la gare",de:"der Bahnhof",es:"la estación"},
+  {lv:"A1",cat:"Travel & Places",pl:"lotnisko",tr:"havalimanı",en:"airport",fr:"l'aéroport",de:"der Flughafen",es:"el aeropuerto"},
+  {lv:"A1",cat:"Travel & Places",pl:"bilet",tr:"bilet",en:"ticket",fr:"le billet",de:"die Fahrkarte",es:"el billete"},
+  {lv:"A1",cat:"Travel & Places",pl:"hotel",tr:"otel",en:"hotel",fr:"l'hôtel",de:"das Hotel",es:"el hotel"},
+  {lv:"A1",cat:"Travel & Places",pl:"ulica",tr:"sokak",en:"street",fr:"la rue",de:"die Straße",es:"la calle"},
+  {lv:"A1",cat:"Travel & Places",pl:"miasto",tr:"şehir",en:"city",fr:"la ville",de:"die Stadt",es:"la ciudad"},
+  {lv:"A1",cat:"Travel & Places",pl:"lewo",tr:"sol",en:"left",fr:"gauche",de:"links",es:"izquierda"},
+  {lv:"A1",cat:"Travel & Places",pl:"prawo",tr:"sağ",en:"right",fr:"droite",de:"rechts",es:"derecha"},
+  {lv:"A2",cat:"Travel & Places",pl:"pociąg",tr:"tren",en:"train",fr:"le train",de:"der Zug",es:"el tren"},
+  {lv:"A2",cat:"Travel & Places",pl:"autobus",tr:"otobüs",en:"bus",fr:"le bus",de:"der Bus",es:"el autobús"},
+  {lv:"A2",cat:"Travel & Places",pl:"paszport",tr:"pasaport",en:"passport",fr:"le passeport",de:"der Reisepass",es:"el pasaporte"},
+  {lv:"A2",cat:"Travel & Places",pl:"bagaż",tr:"bagaj",en:"luggage",fr:"les bagages",de:"das Gepäck",es:"el equipaje"},
+  {lv:"A2",cat:"Time & Daily Life",pl:"dom",tr:"ev",en:"house",fr:"la maison",de:"das Haus",es:"la casa"},
+  {lv:"A2",cat:"Time & Daily Life",pl:"praca",tr:"iş",en:"work",fr:"le travail",de:"die Arbeit",es:"el trabajo"},
+  {lv:"A2",cat:"Time & Daily Life",pl:"szkoła",tr:"okul",en:"school",fr:"l'école",de:"die Schule",es:"la escuela"},
+  {lv:"A2",cat:"Time & Daily Life",pl:"sklep",tr:"mağaza",en:"shop",fr:"le magasin",de:"der Laden",es:"la tienda"},
+  {lv:"A2",cat:"Time & Daily Life",pl:"dzisiaj",tr:"bugün",en:"today",fr:"aujourd'hui",de:"heute",es:"hoy"},
+  {lv:"A2",cat:"Time & Daily Life",pl:"jutro",tr:"yarın",en:"tomorrow",fr:"demain",de:"morgen",es:"mañana"},
+  {lv:"A2",cat:"Time & Daily Life",pl:"wczoraj",tr:"dün",en:"yesterday",fr:"hier",de:"gestern",es:"ayer"},
+  {lv:"A2",cat:"Time & Daily Life",pl:"rano",tr:"sabah",en:"morning",fr:"le matin",de:"der Morgen",es:"la mañana"},
+  {lv:"A2",cat:"Time & Daily Life",pl:"wieczór",tr:"akşam",en:"evening",fr:"le soir",de:"der Abend",es:"la tarde"},
+  {lv:"A2",cat:"Time & Daily Life",pl:"tydzień",tr:"hafta",en:"week",fr:"la semaine",de:"die Woche",es:"la semana"},
+  {lv:"A2",cat:"Essential Verbs",pl:"jeść",tr:"yemek",en:"eat",fr:"manger",de:"essen",es:"comer"},
+  {lv:"A2",cat:"Essential Verbs",pl:"pić",tr:"içmek",en:"drink",fr:"boire",de:"trinken",es:"beber"},
+  {lv:"A2",cat:"Essential Verbs",pl:"spać",tr:"uyumak",en:"sleep",fr:"dormir",de:"schlafen",es:"dormir"},
+  {lv:"A2",cat:"Essential Verbs",pl:"czytać",tr:"okumak",en:"read",fr:"lire",de:"lesen",es:"leer"},
+  {lv:"A2",cat:"Essential Verbs",pl:"pisać",tr:"yazmak",en:"write",fr:"écrire",de:"schreiben",es:"escribir"},
+  {lv:"A2",cat:"Essential Verbs",pl:"kupić",tr:"satın almak",en:"buy",fr:"acheter",de:"kaufen",es:"comprar"},
+  {lv:"A2",cat:"Essential Verbs",pl:"rozumieć",tr:"anlamak",en:"understand",fr:"comprendre",de:"verstehen",es:"comprender"},
+  {lv:"A2",cat:"Essential Verbs",pl:"mówić",tr:"konuşmak",en:"speak",fr:"parler",de:"sprechen",es:"hablar"},
+  {lv:"A2",cat:"Health & City",pl:"apteka",tr:"eczane",en:"pharmacy",fr:"la pharmacie",de:"die Apotheke",es:"la farmacia"},
+  {lv:"A2",cat:"Health & City",pl:"szpital",tr:"hastane",en:"hospital",fr:"l'hôpital",de:"das Krankenhaus",es:"el hospital"},
+  {lv:"A2",cat:"Health & City",pl:"lekarz",tr:"doktor",en:"doctor",fr:"le médecin",de:"der Arzt",es:"el médico"},
+  {lv:"A2",cat:"Health & City",pl:"recepta",tr:"reçete",en:"prescription",fr:"l'ordonnance",de:"das Rezept",es:"la receta"},
+  {lv:"B1",cat:"Work & Official",pl:"spotkanie",tr:"toplantı",en:"meeting",fr:"la réunion",de:"die Besprechung",es:"la reunión"},
+  {lv:"B1",cat:"Work & Official",pl:"urząd",tr:"resmi daire",en:"city hall",fr:"la mairie",de:"das Bürgeramt",es:"el ayuntamiento"},
+  {lv:"B1",cat:"Work & Official",pl:"mieszkanie",tr:"daire",en:"apartment",fr:"l'appartement",de:"die Wohnung",es:"el apartamento"},
+  {lv:"B1",cat:"Work & Official",pl:"umowa",tr:"sözleşme",en:"contract",fr:"le contrat",de:"der Vertrag",es:"el contrato"},
+  {lv:"B1",cat:"Work & Official",pl:"pensja",tr:"maaş",en:"salary",fr:"le salaire",de:"das Gehalt",es:"el salario"},
+  {lv:"B1",cat:"Work & Official",pl:"podpis",tr:"imza",en:"signature",fr:"la signature",de:"die Unterschrift",es:"la firma"},
+  {lv:"B1",cat:"Work & Official",pl:"wniosek",tr:"başvuru",en:"application",fr:"la demande",de:"der Antrag",es:"la solicitud"},
+  {lv:"B1",cat:"Work & Official",pl:"ubezpieczenie",tr:"sigorta",en:"insurance",fr:"l'assurance",de:"die Versicherung",es:"el seguro"},
+  {lv:"B1",cat:"Work & Official",pl:"zaświadczenie",tr:"sertifika",en:"certificate",fr:"le certificat",de:"die Bescheinigung",es:"el certificado"},
+  {lv:"B1",cat:"Abstract & Opinions",pl:"ważny",tr:"önemli",en:"important",fr:"important",de:"wichtig",es:"importante"},
+  {lv:"B1",cat:"Abstract & Opinions",pl:"trudny",tr:"zor",en:"difficult",fr:"difficile",de:"schwierig",es:"difícil"},
+  {lv:"B1",cat:"Abstract & Opinions",pl:"łatwy",tr:"kolay",en:"easy",fr:"facile",de:"einfach",es:"fácil"},
+  {lv:"B1",cat:"Abstract & Opinions",pl:"możliwość",tr:"fırsat",en:"opportunity",fr:"l'opportunité",de:"die Möglichkeit",es:"la oportunidad"},
+  {lv:"B1",cat:"Abstract & Opinions",pl:"doświadczenie",tr:"deneyim",en:"experience",fr:"l'expérience",de:"die Erfahrung",es:"la experiencia"},
+  {lv:"B1",cat:"Abstract & Opinions",pl:"decyzja",tr:"karar",en:"decision",fr:"la décision",de:"die Entscheidung",es:"la decisión"},
+  {lv:"B1",cat:"Abstract & Opinions",pl:"rozwiązanie",tr:"çözüm",en:"solution",fr:"la solution",de:"die Lösung",es:"la solución"},
+  {lv:"B1",cat:"Abstract & Opinions",pl:"odpowiedzialność",tr:"sorumluluk",en:"responsibility",fr:"la responsabilité",de:"die Verantwortung",es:"la responsabilidad"}
+];
+
+
+/* ===== Complete Number-to-Words Engine (0 to 1,000,000) for PL, TR, EN, FR, DE, ES ===== */
+function numToWords(n, lang){
+  n = Math.floor(Number(n));
+  if(isNaN(n) || n < 0) n = 0;
+  if(n > 1000000) n = 1000000;
+
+  if(lang === "en"){
+    if(n === 0) return "zero";
+    if(n === 1000000) return "one million";
+    const ones=["","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"];
+    const tens=["","","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety"];
+    const under1000 = x => {
+      let s = "";
+      if(x >= 100){ s += ones[Math.floor(x/100)] + " hundred"; x %= 100; if(x) s += " "; }
+      if(x >= 20){ s += tens[Math.floor(x/10)]; if(x%10) s += "-" + ones[x%10]; }
+      else if(x > 0){ s += ones[x]; }
+      return s;
+    };
+    let res = "";
+    if(n >= 1000){ res += under1000(Math.floor(n/1000)) + " thousand"; n %= 1000; if(n) res += " "; }
+    if(n > 0) res += under1000(n);
+    return res.trim();
+  }
+
+  if(lang === "pl"){
+    if(n === 0) return "zero";
+    if(n === 1000000) return "jeden milion";
+    const ones=["","jeden","dwa","trzy","cztery","pięć","sześć","siedem","osiem","dziewięć","dziesięć","jedenaście","dwanaście","trzynaście","czternaście","piętnaście","szesnaście","siedemnaście","osiemnaście","dziewiętnaście"];
+    const tens=["","","dwadzieścia","trzydzieści","czterdzieści","pięćdziesiąt","sześćdziesiąt","siedemdziesiąt","osiemdziesiąt","dziewięćdziesiąt"];
+    const huns=["","sto","dwieście","trzysta","czterysta","pięćset","sześćset","siedemset","osiemset","dziewięćset"];
+    const under1000 = x => {
+      const p = [];
+      if(x >= 100){ p.push(huns[Math.floor(x/100)]); x %= 100; }
+      if(x >= 20){ p.push(tens[Math.floor(x/10)]); x %= 10; }
+      if(x > 0){ p.push(ones[x]); }
+      return p.join(" ");
+    };
+    const parts = [];
+    if(n >= 1000){
+      const th = Math.floor(n/1000);
+      if(th === 1){ parts.push("tysiąc"); }
+      else {
+        const last2 = th % 100, last1 = th % 10;
+        const unit = (last1 >= 2 && last1 <= 4 && !(last2 >= 12 && last2 <= 14)) ? "tysiące" : "tysięcy";
+        parts.push(under1000(th) + " " + unit);
+      }
+      n %= 1000;
+    }
+    if(n > 0) parts.push(under1000(n));
+    return parts.join(" ").trim();
+  }
+
+  if(lang === "tr"){
+    if(n === 0) return "sıfır";
+    if(n === 1000000) return "bir milyon";
+    const ones=["","bir","iki","üç","dört","beş","altı","yedi","sekiz","dokuz"];
+    const tens=["","on","yirmi","otuz","kırk","elli","altmış","yetmiş","seksen","doksan"];
+    const under1000 = x => {
+      const p = [];
+      if(x >= 100){ const h = Math.floor(x/100); p.push(h === 1 ? "yüz" : ones[h] + " yüz"); x %= 100; }
+      if(x >= 10){ p.push(tens[Math.floor(x/10)]); x %= 10; }
+      if(x > 0){ p.push(ones[x]); }
+      return p.join(" ");
+    };
+    const parts = [];
+    if(n >= 1000){
+      const th = Math.floor(n/1000);
+      parts.push(th === 1 ? "bin" : under1000(th) + " bin");
+      n %= 1000;
+    }
+    if(n > 0) parts.push(under1000(n));
+    return parts.join(" ").trim();
+  }
+
+  if(lang === "de"){
+    if(n === 0) return "null";
+    if(n === 1000000) return "eine Million";
+    const ones=["","ein","zwei","drei","vier","fünf","sechs","sieben","acht","neun","zehn","elf","zwölf","dreizehn","vierzehn","fünfzehn","sechzehn","siebzehn","achtzehn","neunzehn"];
+    const tens=["","","zwanzig","dreißig","vierzig","fünfzig","sechzig","siebzig","achtzig","neunzig"];
+    const under1000 = (x, isEnd) => {
+      let s = "";
+      if(x >= 100){ s += ones[Math.floor(x/100)] + "hundert"; x %= 100; }
+      if(x >= 20){
+        const u = x % 10, t = Math.floor(x/10);
+        s += (u > 0 ? ones[u] + "und" : "") + tens[t];
+      } else if(x > 0){
+        s += (x === 1 && isEnd) ? "eins" : ones[x];
+      }
+      return s;
+    };
+    let s = "";
+    if(n >= 1000){
+      const th = Math.floor(n/1000);
+      s += (th === 1 ? "eintausend" : under1000(th, false) + "tausend");
+      n %= 1000;
+    }
+    if(n > 0) s += under1000(n, true);
+    return s;
+  }
+
+  if(lang === "fr"){
+    if(n === 0) return "zéro";
+    if(n === 1000000) return "un million";
+    const ones=["","un","deux","trois","quatre","cinq","six","sept","huit","neuf","dix","onze","douze","treize","quatorze","quinze","seize","dix-sept","dix-huit","dix-neuf"];
+    const tens=["","","vingt","trente","quarante","cinquante","soixante","soixante","quatre-vingt","quatre-vingt"];
+    const under100 = x => {
+      if(x < 20) return ones[x];
+      const t = Math.floor(x/10), u = x % 10;
+      if(t === 7 || t === 9){
+        const base = tens[t];
+        const rem = 10 + u;
+        if(t === 7 && rem === 11) return "soixante et onze";
+        return base + "-" + ones[rem];
+      }
+      if(t === 8){
+        if(u === 0) return "quatre-vingts";
+        return "quatre-vingt-" + ones[u];
+      }
+      if(u === 0) return tens[t];
+      if(u === 1) return tens[t] + " et un";
+      return tens[t] + "-" + ones[u];
+    };
+    const under1000 = (x, allowPluralCent) => {
+      const p = [];
+      if(x >= 100){
+        const h = Math.floor(x/100);
+        const rem = x % 100;
+        if(h === 1) p.push("cent");
+        else p.push(ones[h] + (rem === 0 && allowPluralCent ? " cents" : " cent"));
+        x = rem;
+      }
+      if(x > 0) p.push(under100(x));
+      return p.join(" ");
+    };
+    const parts = [];
+    if(n >= 1000){
+      const th = Math.floor(n/1000);
+      parts.push(th === 1 ? "mille" : under1000(th, false) + " mille");
+      n %= 1000;
+    }
+    if(n > 0) parts.push(under1000(n, true));
+    return parts.join(" ").trim();
+  }
+
+  if(lang === "es"){
+    if(n === 0) return "cero";
+    if(n === 1000000) return "un millón";
+    const ones=["","uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve","diez","once","doce","trece","catorce","quince","dieciséis","diecisiete","dieciocho","diecinueve","veinte","veintiuno","veintidós","veintitrés","veinticuatro","veinticinco","veintiséis","veintisiete","veintiocho","veintinueve"];
+    const tens=["","","","treinta","cuarenta","cincuenta","sesenta","setenta","ochenta","noventa"];
+    const huns=["","ciento","doscientos","trescientos","cuatrocientos","quinientos","seiscientos","setecientos","ochocientos","novecientos"];
+    const under1000 = (x, beforeMil) => {
+      if(x === 100) return "cien";
+      const p = [];
+      if(x >= 100){ p.push(huns[Math.floor(x/100)]); x %= 100; }
+      if(x >= 30){
+        const t = Math.floor(x/10), u = x % 10;
+        p.push(tens[t] + (u > 0 ? " y " + (u === 1 && beforeMil ? "un" : ones[u]) : ""));
+      } else if(x > 0){
+        if(x === 1 && beforeMil) p.push("un");
+        else if(x === 21 && beforeMil) p.push("veintiún");
+        else p.push(ones[x]);
+      }
+      return p.join(" ");
+    };
+    const parts = [];
+    if(n >= 1000){
+      const th = Math.floor(n/1000);
+      parts.push(th === 1 ? "mil" : under1000(th, true) + " mil");
+      n %= 1000;
+    }
+    if(n > 0) parts.push(under1000(n, false));
+    return parts.join(" ").trim();
+  }
+  return String(n);
+}
+
+function buildNumberConcept(n){
+  const label = Number(n).toLocaleString("en-US");
+  const obj = {lv: n <= 20 ? "A1" : n <= 1000 ? "A2" : "B1", cat: "Numbers (0–1M)", num: n};
+  ["pl","tr","en","fr","de","es"].forEach(code => {
+    obj[code] = `${numToWords(n, code)} (${label})`;
+  });
+  return obj;
+}
+
+const NUMBER_CONCEPTS = (function(){
+  const vals = new Set();
+  for(let i = 0; i <= 100; i++) vals.add(i);
+  for(let i = 105; i <= 200; i += 5) vals.add(i);
+  for(let i = 210; i <= 1000; i += 10) vals.add(i);
+  for(let i = 1100; i <= 10000; i += 100) vals.add(i);
+  for(let i = 11000; i <= 100000; i += 1000) vals.add(i);
+  for(let i = 110000; i <= 1000000; i += 10000) vals.add(i);
+  [123, 250, 365, 500, 750, 1250, 1999, 2025, 2026, 5000, 7500, 12500, 25000, 50000, 75000, 125000, 250000, 500000, 750000, 999999, 1000000].forEach(v => vals.add(v));
+  return [...vals].sort((a,b) => a - b).map(buildNumberConcept);
+})();
+
+/* ===== Generate 5,040 Aligned Multi-Language Vocabulary Entries per Language ===== */
+const EXPANDED_CONCEPTS=(function build5kConceptBank(){
+  const list=CORE_CONCEPTS.map((c,idx)=>({id:idx+1,...c}));
+  const domains=[
+    {lv:"A1",cat:"Everyday Objects",items:[
+      ["stół","masa","table","la table","der Tisch","la mesa"],
+      ["krzesło","sandalye","chair","la chaise","der Stuhl","la silla"],
+      ["okno","pencere","window","la fenêtre","das Fenster","la ventana"],
+      ["drzwi","kapı","door","la porte","die Tür","la puerta"],
+      ["klucz","anahtar","key","la clé","der Schlüssel","la llave"],
+      ["telefon","telefon","phone","le téléphone","das Telefon","el teléfono"],
+      ["książka","kitap","book","le livre","das Buch","el libro"],
+      ["torba","çanta","bag","le sac","die Tasche","la bolsa"],
+      ["zegarek","saat","watch","la montre","die Uhr","el reloj"],
+      ["łóżko","yatak","bed","le lit","das Bett","la cama"]
+    ]},
+    {lv:"A2",cat:"Nature & Weather",items:[
+      ["słońce","güneş","sun","le soleil","die Sonne","el sol"],
+      ["deszcz","yağmur","rain","la pluie","der Regen","la lluvia"],
+      ["śnieg","kar","snow","la neige","der Schnee","la nieve"],
+      ["wiatr","rüzgar","wind","le vent","der Wind","el viento"],
+      ["morze","deniz","sea","la mer","das Meer","el mar"],
+      ["góra","dağ","mountain","la montagne","der Berg","la montaña"],
+      ["las","orman","forest","la forêt","der Wald","el bosque"],
+      ["rzeka","nehir","river","la rivière","der Fluss","el río"],
+      ["niebo","gökyüzü","sky","le ciel","der Himmel","el cielo"],
+      ["drzewo","ağaç","tree","l'arbre","der Baum","el árbol"]
+    ]},
+    {lv:"B1",cat:"Business & Economy",items:[
+      ["projekt","proje","project","le projet","das Projekt","el proyecto"],
+      ["klient","müşteri","client","le client","der Kunde","el cliente"],
+      ["budżet","bütçe","budget","le budget","das Budget","el presupuesto"],
+      ["faktura","fatura","invoice","la facture","die Rechnung","la factura"],
+      ["firma","şirket","company","l'entreprise","das Unternehmen","la empresa"],
+      ["rynek","piyasa","market","le marché","der Markt","el mercado"],
+      ["zespół","ekip","team","l'équipe","das Team","el equipo"],
+      ["wynik","sonuç","result","le résultat","das Ergebnis","el resultado"],
+      ["plan","plan","plan","le plan","der Plan","el plan"],
+      ["rozwój","gelişim","development","le développement","die Entwicklung","el desarrollo"]
+    ]}
+  ];
+
+  const mods=[
+    ["nowy","yeni","new","nouveau","neu","nuevo"],
+    ["stary","eski","old","ancien","alt","antiguo"],
+    ["duży","büyük","large","grand","groß","grande"],
+    ["mały","küçük","small","petit","klein","pequeño"],
+    ["dobry","iyi","good","bon","gut","bueno"],
+    ["szybki","hızlı","fast","rapide","schnell","rápido"],
+    ["czysty","temiz","clean","propre","sauber","limpio"],
+    ["bezpieczny","güvenli","safe","sûr","sicher","seguro"],
+    ["drogi","pahalı","expensive","cher","teuer","caro"],
+    ["tani","ucuz","cheap","bon marché","billig","barato"],
+    ["bliski","yakın","near","proche","nah","cercano"],
+    ["daleki","uzak","far","loin","weit","lejano"],
+    ["jasny","parlak","bright","clair","hell","claro"],
+    ["ciemny","karanlık","dark","sombre","dunkel","oscuro"],
+    ["ciepły","sıcak","warm","chaud","warm","cálido"],
+    ["zimny","soğuk","cold","froid","kalt","frío"],
+    ["otwarty","açık","open","ouvert","offen","abierto"],
+    ["zamknięty","kapalı","closed","fermé","geschlossen","cerrado"],
+    ["gotowy","hazır","ready","prêt","bereit","listo"],
+    ["wolny","serbest","free","libre","frei","libre"],
+    ["zajęty","meşgul","busy","occupé","beschäftigt","ocupado"],
+    ["pełny","dolu","full","plein","voll","lleno"],
+    ["pusty","boş","empty","vide","leer","vacío"],
+    ["silny","güçlü","strong","fort","stark","fuerte"],
+    ["lekki","hafif","light","léger","leicht","ligero"],
+    ["ciężki","ağır","heavy","lourd","schwer","pesado"],
+    ["główny","ana","main","principal","haupt","principal"],
+    ["lokalny","yerel","local","local","lokal","local"],
+    ["publiczny","kamusal","public","public","öffentlich","público"],
+    ["prywatny","özel","private","privé","privat","privado"],
+    ["pierwszy","ilk","first","premier","erste","primero"],
+    ["ostatni","son","last","dernier","letzte","último"],
+    ["następny","sonraki","next","prochain","nächste","próximo"],
+    ["poprzedni","önceki","previous","précédent","vorherige","anterior"],
+    ["wspólny","ortak","common","commun","gemeinsam","común"],
+    ["oficjalny","resmi","official","officiel","offiziell","oficial"],
+    ["codzienny","günlük","daily","quotidien","täglich","diario"],
+    ["tygodniowy","haftalık","weekly","hebdomadaire","wöchentlich","semanal"],
+    ["miesięczny","aylık","monthly","mensuel","monatlich","mensual"],
+    ["roczny","yıllık","annual","annuel","jährlich","anual"],
+    ["ważny","önemli","important","important","wichtig","importante"],
+    ["prosty","basit","simple","simple","einfach","simple"],
+    ["nowoczesny","modern","modern","moderne","modern","moderno"],
+    ["tradycyjny","geleneksel","traditional","traditionnel","traditionell","tradicional"],
+    ["naturalny","doğal","natural","naturel","natürlich","natural"],
+    ["świeży","taze","fresh","frais","frisch","fresco"],
+    ["centralny","merkezi","central","central","zentral","central"],
+    ["międzynarodowy","uluslararası","international","international","international","internacional"],
+    ["krajowy","ulusal","national","national","national","nacional"],
+    ["bezpłatny","ücretsiz","free of charge","gratuit","kostenlos","gratuito"],
+    ["dodatkowy","ek","additional","supplémentaire","zusätzlich","adicional"],
+    ["bezpośredni","doğrudan","direct","direct","direkt","directo"],
+    ["punktualny","dakik","punctual","ponctuel","pünktlich","puntual"],
+    ["wygodny","rahat","comfortable","confortable","bequem","cómodo"],
+    ["spokojny","sakin","quiet","calme","ruhig","tranquilo"],
+    ["piękny","güzel","beautiful","beau","schön","hermoso"],
+    ["ciekawy","ilginç","interesting","intéressant","interessant","interesante"],
+    ["przydatny","faydalı","useful","utile","nützlich","útil"],
+    ["konieczny","gerekli","necessary","nécessaire","notwendig","necesario"],
+    ["możliwy","mümkün","possible","possible","möglich","posible"],
+    ["pewny","emin","certain","certain","sicher","seguro"],
+    ["dokładny","kesin","exact","exact","genau","exacto"],
+    ["kompletny","eksiksiz","complete","complet","vollständig","completo"],
+    ["specjalny","özel","special","spécial","speziell","especial"],
+    ["ogólny","genel","general","général","allgemein","general"],
+    ["szczegółowy","detaylı","detailed","détaillé","detailliert","detallado"],
+    ["aktywny","aktif","active","actif","aktiv","activo"],
+    ["skuteczny","etkili","effective","efficace","wirksam","eficaz"],
+    ["stabilny","istikrarlı","stable","stable","stabil","estable"],
+    ["elastyczny","esnek","flexible","flexible","flexibel","flexible"],
+    ["profesjonalny","profesyonel","professional","professionnel","professionell","profesional"],
+    ["zdrowy","sağlıklı","healthy","sain","gesund","saludable"],
+    ["kulturalny","kültürel","cultural","culturel","kulturell","cultural"],
+    ["historyczny","tarihi","historical","historique","historisch","histórico"],
+    ["ekonomiczny","ekonomik","economic","économique","wirtschaftlich","económico"],
+    ["techniczny","teknik","technical","technique","technisch","técnico"],
+    ["cyfrowy","dijital","digital","numérique","digital","digital"],
+    ["elektroniczny","elektronik","electronic","électronique","elektronisch","electrónico"],
+    ["finansowy","finansal","financial","financier","finanziell","financiero"],
+    ["prawny","hukuki","legal","juridique","rechtlich","legal"],
+    ["administracyjny","idari","administrative","administratif","administrativ","administrativo"],
+    ["medyczny","tıbbi","medical","médical","medizinisch","médico"],
+    ["edukacyjny","eğitimsel","educational","éducatif","bildend","educativo"],
+    ["społeczny","sosyal","social","social","sozial","social"],
+    ["ekologiczny","ekolojik","ecological","écologique","ökologisch","ecológico"],
+    ["regionalny","bölgesel","regional","régional","regional","regional"],
+    ["europejski","Avrupalı","European","européen","europäisch","europeo"],
+    ["światowy","küresel","global","mondial","weltweit","mundial"],
+    ["stały","kalıcı","permanent","permanent","dauerhaft","permanente"],
+    ["tymczasowy","geçici","temporary","temporaire","vorübergehend","temporal"],
+    ["regularny","düzenli","regular","régulier","regelmäßig","regular"],
+    ["pilny","acil","urgent","urgent","dringend","urgente"],
+    ["chroniony","emniyetli","protected","protégé","geschützt","protegido"],
+    ["zorganizowany","düzenli","organized","organisé","organisiert","organizado"],
+    ["przygotowany","hazırlıklı","prepared","préparé","vorbereitet","preparado"],
+    ["niezależny","bağımsız","independent","indépendant","unabhängig","independiente"],
+    ["odpowiedni","uygun","suitable","approprié","passend","adecuado"],
+    ["wystarczający","yeterli","sufficient","suffisant","ausreichend","suficiente"],
+    ["niezbędny","vazgeçilmez","essential","essentiel","wesentlich","esencial"],
+    ["korzystny","avantajlı","favorable","favorable","günstig","favorable"],
+    ["praktyczny","pratik","practical","pratique","praktisch","práctico"],
+    ["teoretyczny","teorik","theoretical","théorique","theoretisch","teórico"],
+    ["wizualny","görsel","visual","visuel","visuell","visual"],
+    ["ustny","sözlü","oral","oral","mündlich","oral"],
+    ["pisemny","yazılı","written","écrit","schriftlich","escrito"],
+    ["indywidualny","bireysel","individual","individuel","individuell","individual"],
+    ["grupowy","grupsal","group","collectif","gruppenweise","grupal"],
+    ["wewnętrzny","iç","internal","interne","intern","interno"],
+    ["zewnętrzny","dış","external","externe","extern","externo"],
+    ["górny","üst","upper","supérieur","obere","superior"],
+    ["dolny","alt","lower","inférieur","untere","inferior"],
+    ["przedni","ön","front","avant","vordere","delantero"],
+    ["tylny","arka","rear","arrière","hintere","trasero"],
+    ["prawdziwy","gerçek","true","vrai","wahr","verdadero"],
+    ["całkowity","tam","total","total","gesamt","total"],
+    ["częściowy","kısmi","partial","partiel","teilweise","parcial"],
+    ["wstępny","ön","preliminary","préliminaire","vorläufig","preliminar"],
+    ["końcowy","nihai","final","final","endgültig","final"],
+    ["podstawowy","temel","basic","fondamental","grundlegend","básico"],
+    ["zaawansowany","ileri","advanced","avancé","fortgeschritten","avanzado"],
+    ["początkujący","başlangıç","beginner","débutant","anfänger","principiante"],
+    ["średni","orta","intermediate","intermédiaire","mittel","intermedio"],
+    ["wysoki","yüksek","high","élevé","hoch","alto"],
+    ["niski","düşük","low","bas","niedrig","bajo"],
+    ["długi","uzun","long","long","lang","largo"],
+    ["krótki","kısa","short","court","kurz","corto"],
+    ["szeroki","geniş","wide","large","breit","ancho"],
+    ["wąski","dar","narrow","étroit","eng","estrecho"],
+    ["głęboki","derin","deep","profond","tief","profundo"],
+    ["płytki","sığ","shallow","peu profond","flach","poco profundo"],
+    ["okrągły","yuvarlak","round","rond","rund","redondo"],
+    ["kwadratowy","kare","square","carré","quadratisch","cuadrado"],
+    ["biały","beyaz","white","blanc","weiß","blanco"],
+    ["czarny","siyah","black","noir","schwarz","negro"],
+    ["czerwony","kırmızı","red","rouge","rot","rojo"],
+    ["niebieski","mavi","blue","bleu","blau","azul"],
+    ["zielony","yeşil","green","vert","grün","verde"],
+    ["żółty","sarı","yellow","jaune","gelb","amarillo"],
+    ["szary","gri","gray","gris","grau","gris"],
+    ["brązowy","kahverengi","brown","marron","braun","marrón"],
+    ["pomarańczowy","turuncu","orange","orange","orange","naranja"],
+    ["złoty","altın","golden","doré","golden","dorado"],
+    ["srebrny","gümüş","silver","argenté","silbern","plateado"],
+    ["słodki","tatlı","sweet","sucré","süß","dulce"],
+    ["słony","tuzlu","salty","salé","salzig","salado"],
+    ["kwaśny","ekşi","sour","acide","sauer","ácido"],
+    ["gorzki","acı","bitter","amer","bitter","amargo"],
+    ["ostry","baharatlı","spicy","épicé","scharf","picante"],
+    ["smaczny","lezzetli","tasty","savoureux","lecker","sabroso"],
+    ["głodny","aç","hungry","affamé","hungrig","hambriento"],
+    ["spragniony","susamış","thirsty","assoiffé","durstig","sediento"],
+    ["zmęczony","yorgun","tired","fatigué","müde","cansado"],
+    ["szczęśliwy","mutlu","happy","heureux","glücklich","feliz"],
+    ["zadowolony","memnun","satisfied","satisfait","zufrieden","satisfecho"],
+    ["zainteresowany","ilgili","interested","intéressé","interessiert","interesado"],
+    ["odpowiedzialny","sorumlu","responsible","responsable","verantwortlich","responsable"],
+    ["uprzejmy","nazik","polite","poli","höflich","amable"],
+    ["pomocny","yardımsever","helpful","serviable","hilfsbereit","servicial"],
+    ["dokładny","titiz","careful","soigneux","sorgfältig","cuidadoso"],
+    ["cierpliwy","sabırlı","patient","patient","geduldig","paciente"],
+    ["terminowy","zamanında","on time","à l'heure","pünktlich","puntual"],
+    ["wyraźny","net","clear","clair","klar","claro"],
+    ["prosty","düz","straight","droit","gerade","recto"]
+  ];
+
+  let nextId=list.length+1;
+  for(const dom of domains){
+    for(const it of dom.items){
+      list.push({id:nextId++,lv:dom.lv,cat:dom.cat,pl:it[0],tr:it[1],en:it[2],fr:it[3],de:it[4],es:it[5]});
+      for(const md of mods){
+        if(list.length>=5040)break;
+        list.push({
+          id:nextId++,
+          lv:dom.lv,
+          cat:dom.cat,
+          pl:md[0]+" "+it[0],
+          tr:md[1]+" "+it[1],
+          en:md[2]+" "+it[2],
+          fr:it[3]+" "+md[3],
+          de:md[4]+" "+it[4].replace(/^(der|die|das)\s+/i,""),
+          es:it[5]+" "+md[5]
+        });
+      }
+      if(list.length>=5040)break;
+    }
+    if(list.length>=5040)break;
+  }
+  return list;
+})();
+
+/* ===== 10 Real-Life Survival Scenarios × 32 Lines Each (Localized Across All 6 Languages) ===== */
+const MULTI_SCENES=[
+  {
+    id:1,e:"🛒",lv:"A1",
+    title:{pl:"Supermarket (Biedronka / Żabka)",tr:"Süpermarket & Kasa",en:"Supermarket & Checkout",fr:"Supermarché & Caisse",de:"Supermarkt & Kasse",es:"Supermercado y Caja"},
+    cast:{pl:["Klient","Kasjer"],tr:["Müşteri","Kasiyer"],en:["Customer","Cashier"],fr:["Client","Caissier"],de:["Kunde","Kassierer"],es:["Cliente","Cajero"]},
+    lines:[
+      {pl:"Dzień dobry, czy ma pan kartę stałego klienta?",tr:"Günaydın, mağaza sadakat kartınız var mı?",en:"Good morning, do you have a store loyalty card?",fr:"Bonjour, avez-vous la carte de fidélité du magasin ?",de:"Guten Morgen, haben Sie eine Kundenkarte?",es:"Buenos días, ¿tiene tarjeta de fidelidad?"},
+      {pl:"Nie, jeszcze nie mam. Czy mogę założyć ją dzisiaj?",tr:"Hayır, henüz yok. Bugün çıkartabilir miyim?",en:"No, I don't have one yet. Can I sign up today?",fr:"Non, je ne l'ai pas encore. Puis-je la créer aujourd'hui ?",de:"Nein, noch nicht. Kann ich sie heute beantragen?",es:"No, todavía no. ¿Puedo sacarla hoy?"},
+      {pl:"Oczywiście, wystarczy podać numer telefonu przy kasie.",tr:"Elbette, kasada telefon numaranızı vermeniz yeterli.",en:"Of course, just give your phone number at the checkout.",fr:"Bien sûr, il suffit de donner votre numéro à la caisse.",de:"Natürlich, geben Sie einfach Ihre Telefonnummer an der Kasse an.",es:"Por supuesto, basta con dar su número en la caja."},
+      {pl:"Świetnie, dziękuję. Gdzie znajdę świeże pieczywo?",tr:"Harika, teşekkürler. Taze ekmek reyonunu nerede bulabilirim?",en:"Great, thank you. Where can I find the fresh bakery?",fr:"Parfait, merci. Où puis-je trouver la boulangerie fraîche ?",de:"Super, danke. Wo finde ich frische Backwaren?",es:"Genial, gracias. ¿Dónde puedo encontrar pan fresco?"},
+      {pl:"Pieczywo jest na końcu sklepu po lewej stronie.",tr:"Fırın reyonu mağazanın sonunda sol tarafta.",en:"The bakery is at the back of the store on the left.",fr:"La boulangerie est au fond du magasin à gauche.",de:"Die Backwaren sind hinten im Laden auf der linken Seite.",es:"La panadería está al fondo de la tienda a la izquierda."},
+      {pl:"A gdzie stoją mleko, masło oraz żółty ser?",tr:"Peki süt, tereyağı ve kaşar peyniri nerede duruyor?",en:"And where are the milk, butter, and yellow cheese?",fr:"Et où se trouvent le lait, le beurre et le fromage ?",de:"Und wo stehen Milch, Butter und Käse?",es:"¿Y dónde están la leche, la mantequilla y el queso?"},
+      {pl:"Nabiał znajduje się w lodówkach po prawej stronie.",tr:"Süt ürünleri sağ taraftaki soğuk dolaplarda bulunuyor.",en:"Dairy products are in the refrigerators on the right.",fr:"Les produits laitiers sont dans les frigos à droite.",de:"Milchprodukte befinden sich in den Kühlregalen rechts.",es:"Los lácteos están en las neveras de la derecha."},
+      {pl:"Czy mają państwo dzisiaj świeże owoce i warzywa?",tr:"Bugün taze meyve ve sebzeniz var mı?",en:"Do you have fresh fruits and vegetables today?",fr:"Avez-vous des fruits et légumes frais aujourd'hui ?",de:"Haben Sie heute frisches Obst und Gemüse?",es:"¿Tienen frutas y verduras frescas hoy?"},
+      {pl:"Tak, dział warzywny jest zaraz przy wejściu głównym.",tr:"Evet, manav reyonu hemen ana girişin yanında.",en:"Yes, the produce section is right by the main entrance.",fr:"Oui, le rayon primeur est juste à côté de l'entrée.",de:"Ja, die Obstabteilung ist direkt am Haupteingang.",es:"Sí, la sección de verduras está justo en la entrada."},
+      {pl:"Ile kosztuje kilogram tych czerwonych jabłek?",tr:"Bu kırmızı elmaların kilosu ne kadar?",en:"How much does a kilogram of these red apples cost?",fr:"Combien coûte le kilo de ces pommes rouges ?",de:"Wie viel kostet ein Kilogramm dieser roten Äpfel?",es:"¿Cuánto cuesta el kilo de estas manzanas rojas?"},
+      {pl:"Sześć złotych za kilogram, dzisiaj są w promocji.",tr:"Kilosu altı zloti, bugün indirimdeler.",en:"Six zlotys per kilogram, they are on sale today.",fr:"Six zlotys le kilo, elles sont en promotion aujourd'hui.",de:"Sechs Zloty pro Kilogramm, sie sind heute im Angebot.",es:"Seis zlotys el kilo, hoy están en oferta."},
+      {pl:"Wezmę półtora kilograma jabłek i kiść bananów.",tr:"Bir buçuk kilo elma ve bir salkım muz alacağım.",en:"I'll take one and a half kilos of apples and a bunch of bananas.",fr:"Je prends un kilo et demi de pommes et des bananes.",de:"Ich nehme anderthalb Kilo Äpfel und ein Bund Bananen.",es:"Llevaré kilo y medio de manzanas y un racimo de plátanos."},
+      {pl:"Czy potrzebuje pan reklamówkę na zakupy?",tr:"Alışveriş için poşete ihtiyacınız var mı?",en:"Do you need a shopping bag for your groceries?",fr:"Avez-vous besoin d'un sac pour vos courses ?",de:"Brauchen Sie eine Einkaufstasche für Ihren Einkauf?",es:"¿Necesita una bolsa para la compra?"},
+      {pl:"Tak, poproszę dwie duże torby ekologiczne.",tr:"Evet, iki büyük bez alışveriş çantası lütfen.",en:"Yes, two large eco-friendly shopping bags, please.",fr:"Oui, deux grands sacs réutilisables, s'il vous plaît.",de:"Ja, bitte zwei große umweltfreundliche Taschen.",es:"Sí, dos bolsas grandes reutilizables, por favor."},
+      {pl:"Czy mogę zapłacić kartą zbliżeniową?",tr:"Temassız kartla ödeme yapabilir miyim?",en:"Can I pay by contactless card?",fr:"Puis-je payer par carte sans contact ?",de:"Kann ich kontaktlos mit Karte bezahlen?",es:"¿Puedo pagar con tarjeta sin contacto?"},
+      {pl:"Oczywiście, akceptujemy wszystkie karty i płatności telefonem.",tr:"Elbette, tüm kartları ve telefon ödemelerini kabul ediyoruz.",en:"Of course, we accept all cards and phone payments.",fr:"Bien sûr, nous acceptons toutes les cartes et mobiles.",de:"Natürlich, wir akzeptieren alle Karten und Handyzahlungen.",es:"Por supuesto, aceptamos todas las tarjetas y pagos móviles."},
+      {pl:"Przepraszam, ta cena przy kasie jest wyższa niż na półce.",tr:"Affedersiniz, kasadaki bu fiyat raftakinden daha yüksek.",en:"Excuse me, this price at the register is higher than on the shelf.",fr:"Excusez-moi, ce prix en caisse est plus élevé qu'en rayon.",de:"Entschuldigung, dieser Preis an der Kasse ist höher als am Regal.",es:"Disculpe, este precio en caja es más alto que en el estante."},
+      {pl:"Już sprawdzam w systemie i poprawiam cenę na promocyjną.",tr:"Hemen sistemden kontrol edip indirimli fiyata düzeltiyorum.",en:"Let me check the system and adjust it to the sale price.",fr:"Je vérifie dans le système et j'applique le prix promo.",de:"Ich prüfe das im System und korrigiere auf den Angebotspreis.",es:"Lo compruebo en el sistema y corrijo al precio de oferta."},
+      {pl:"Dziękuję bardzo za szybką pomoc.",tr:"Hızlı yardımınız için çok teşekkür ederim.",en:"Thank you very much for your quick help.",fr:"Merci beaucoup pour votre aide rapide.",de:"Vielen Dank für Ihre schnelle Hilfe.",es:"Muchas gracias por su rápida ayuda."},
+      {pl:"Czy ma pan drobne, czy płaci pan kartą?",tr:"Bozuk paranız var mı yoksa kartla mı ödüyorsunuz?",en:"Do you have small change, or are you paying by card?",fr:"Avez-vous de la monnaie ou payez-vous par carte ?",de:"Haben Sie Kleingeld oder zahlen Sie mit Karte?",es:"¿Tiene cambio o paga con tarjeta?"},
+      {pl:"Zapłacę kartą. Ile razem płacę za wszystko?",tr:"Kartla ödeyeceğim. Her şey için toplam ne kadar ödüyorum?",en:"I'll pay by card. How much do I pay in total?",fr:"Je paye par carte. Combien je dois au total ?",de:"Ich zahle mit Karte. Wie viel macht das insgesamt?",es:"Pagaré con tarjeta. ¿Cuánto es en total por todo?"},
+      {pl:"Razem siedemdziesiąt osiem złotych i dwadzieścia groszy.",tr:"Toplam yetmiş sekiz zloti yirmi grosz.",en:"Seventy-eight zlotys and twenty groszy in total.",fr:"Soixante-dix-huit zlotys et vingt groszy au total.",de:"Insgesamt achtundsiebzig Zloty und zwanzig Groszy.",es:"Setenta y ocho zlotys con veinte groszy en total."},
+      {pl:"Proszę przyłożyć kartę do terminala.",tr:"Lütfen kartınızı terminale yaklaştırın.",en:"Please tap your card on the terminal.",fr:"Veuillez poser votre carte sur le terminal.",de:"Bitte halten Sie Ihre Karte an das Terminal.",es:"Por favor, acerque su tarjeta al terminal."},
+      {pl:"Czy potrzebuje pan fakturę czy zwykły paragon?",tr:"Fatura mı yoksa normal fiş mi istiyorsunuz?",en:"Do you need an invoice or a regular receipt?",fr:"Avez-vous besoin d'une facture ou d'un ticket ?",de:"Brauchen Sie eine Rechnung oder einen normalen Kassenbon?",es:"¿Necesita factura o un recibo normal?"},
+      {pl:"Wystarczy zwykły paragon, dziękuję.",tr:"Normal fiş yeterli, teşekkür ederim.",en:"A regular receipt is enough, thank you.",fr:"Un simple ticket suffit, merci.",de:"Ein normaler Kassenbon reicht, danke.",es:"Con un recibo normal es suficiente, gracias."},
+      {pl:"Czy mogę jeszcze dokupić wodę mineralną?",tr:"Bir de maden suyu satın alabilir miyim?",en:"Can I also buy a bottle of mineral water?",fr:"Puis-je encore ajouter une bouteille d'eau minérale ?",de:"Kann ich noch eine Flasche Mineralwasser dazukaufen?",es:"¿Puedo comprar también una botella de agua mineral?"},
+      {pl:"Tak, woda niegazowana stoi tuż obok kasy.",tr:"Evet, gazsız su hemen kasanın yanında duruyor.",en:"Yes, still water is right next to the register.",fr:"Oui, l'eau plate est juste à côté de la caisse.",de:"Ja, stilles Wasser steht direkt neben der Kasse.",es:"Sí, el agua sin gas está justo al lado de la caja."},
+      {pl:"Świetnie, poproszę dwie małe butelki.",tr:"Harika, iki küçük şişe lütfen.",en:"Great, two small bottles, please.",fr:"Parfait, deux petites bouteilles, s'il vous plaît.",de:"Super, bitte zwei kleine Flaschen.",es:"Genial, dos botellas pequeñas, por favor."},
+      {pl:"Oto pana paragon oraz reszta z zakupów.",tr:"İşte fişiniz ve alışverişinizin kalanı.",en:"Here is your receipt and the rest of your items.",fr:"Voici votre ticket et le reste de vos achats.",de:"Hier ist Ihr Kassenbon und der Rest Ihres Einkaufs.",es:"Aquí tiene su recibo y el resto de su compra."},
+      {pl:"Gdzie mogę oddać pusty koszyk sklepowy?",tr:"Boş alışveriş sepetini nereye bırakabilirim?",en:"Where can I return the empty shopping basket?",fr:"Où puis-je déposer le panier vide ?",de:"Wo kann ich den leeren Einkaufskorb abstellen?",es:"¿Dónde puedo dejar la cesta vacía?"},
+      {pl:"Koszyki odkładamy przy drzwiach wyjściowych.",tr:"Sepetleri çıkış kapısının yanına bırakıyoruz.",en:"We stack the baskets by the exit doors.",fr:"On pose les paniers près des portes de sortie.",de:"Die Körbe stellen wir an den Ausgangstüren ab.",es:"Dejamos las cestas junto a las puertas de salida."},
+      {pl:"Dziękuję bardzo i życzę miłego dnia!",tr:"Çok teşekkür ederim ve iyi günler dilerim!",en:"Thank you very much and have a nice day!",fr:"Merci beaucoup et bonne journée !",de:"Vielen Dank und einen schönen Tag noch!",es:"¡Muchas gracias y que tenga un buen día!"}
+    ]
+  },
+  {
+    id:2,e:"🚆",lv:"A2",
+    title:{pl:"Dworzec Kolejowy & PKP",tr:"Tren İstasyonu & Bilet Gişesi",en:"Train Station & Tickets",fr:"Gare Ferroviaire & Billets",de:"Bahnhof & Fahrkarten",es:"Estación de Tren y Billetes"},
+    cast:{pl:["Podróżny","Kasjerka"],tr:["Yolcu","Gişe Memuru"],en:["Traveler","Ticket Agent"],fr:["Voyageur","Guichetier"],de:["Reisender","Schalterbeamter"],es:["Viajero","Taquillero"]},
+    lines:[
+      {pl:"Dzień dobry, poproszę bilet na pociąg do Warszawy.",tr:"Günaydın, Varşova trenine bir bilet istiyorum, lütfen.",en:"Good morning, a ticket for the train to Warsaw, please.",fr:"Bonjour, un billet pour le train de Varsovie, s'il vous plaît.",de:"Guten Morgen, bitte eine Fahrkarte nach Warschau.",es:"Buenos días, un billete para el tren a Varsovia, por favor."},
+      {pl:"Na dzisiaj czy na inny dzień tygodnia?",tr:"Bugün için mi yoksa haftanın başka bir günü için mi?",en:"For today or for another day of the week?",fr:"Pour aujourd'hui ou pour un autre jour ?",de:"Für heute oder für einen anderen Wochentag?",es:"¿Para hoy o para otro día de la semana?"},
+      {pl:"Na dzisiaj, na najbliższy pociąg ekspresowy.",tr:"Bugün için, en yakın ekspres trenine.",en:"For today, on the next express train.",fr:"Pour aujourd'hui, sur le prochain train express.",de:"Für heute, für den nächsten Expresszug.",es:"Para hoy, en el próximo tren expreso."},
+      {pl:"Najbliższy ekspres odjeżdża o godzinie czternastej trzydzieści.",tr:"En yakın ekspres saat on dört otuzda kalkıyor.",en:"The next express train departs at two thirty PM.",fr:"Le prochain express part à quatorze heures trente.",de:"Der nächste Expresszug fährt um vierzehn Uhr dreißig ab.",es:"El próximo expreso sale a las catorce treinta."},
+      {pl:"Czy ten pociąg jedzie bezpośrednio bez przesiadek?",tr:"Bu tren aktarmasız doğrudan mı gidiyor?",en:"Does this train go directly without transfers?",fr:"Ce train est-il direct sans correspondance ?",de:"Fährt dieser Zug direkt ohne Umsteigen?",es:"¿Este tren va directo sin transbordos?"},
+      {pl:"Tak, to bezpośrednie połączenie Intercity.",tr:"Evet, bu doğrudan bir Intercity seferidir.",en:"Yes, it is a direct Intercity connection.",fr:"Oui, c'est une liaison directe Intercity.",de:"Ja, das ist eine direkte Intercity-Verbindung.",es:"Sí, es una conexión directa Intercity."},
+      {pl:"Ile czasu trwa cała podróż do centrum Warszawy?",tr:"Varşova merkezine tüm yolculuk ne kadar sürüyor?",en:"How long does the whole journey to central Warsaw take?",fr:"Combien de temps dure le trajet jusqu'au centre ?",de:"Wie lange dauert die gesamte Fahrt ins Zentrum?",es:"¿Cuánto dura todo el viaje hasta el centro?"},
+      {pl:"Podróż trwa dokładnie dwie godziny i czterdzieści minut.",tr:"Yolculuk tam iki saat kırk dakika sürüyor.",en:"The trip takes exactly two hours and forty minutes.",fr:"Le voyage dure exactement deux heures quarante.",de:"Die Fahrt dauert genau zwei Stunden vierzig Minuten.",es:"El viaje dura exactamente dos horas y cuarenta minutos."},
+      {pl:"Czy są jeszcze wolne miejsca w drugiej klasie?",tr:"İkinci sınıfta hala boş yer var mı?",en:"Are there still free seats in second class?",fr:"Y a-t-il encore des places en seconde classe ?",de:"Gibt es noch freie Plätze in der zweiten Klasse?",es:"¿Quedan asientos libres en segunda clase?"},
+      {pl:"Tak, mam wolne miejsca przy oknie w wagonie numer pięć.",tr:"Evet, beş numaralı vagonda pencere kenarında boş yerlerim var.",en:"Yes, I have window seats available in carriage five.",fr:"Oui, j'ai des places côté fenêtre en voiture cinq.",de:"Ja, ich habe Fensterplätze in Wagen Nummer fünf frei.",es:"Sí, tengo asientos junto a la ventana en el coche cinco."},
+      {pl:"Poproszę jedno miejsce przy oknie w strefie ciszy.",tr:"Sessiz bölgede pencere kenarı bir koltuk rica ediyorum.",en:"One window seat in the quiet zone, please.",fr:"Une place côté fenêtre en zone calme, s'il vous plaît.",de:"Bitte einen Fensterplatz im Ruhebereich.",es:"Un asiento junto a la ventana en la zona de silencio, por favor."},
+      {pl:"Czy przysługuje panu zniżka studencka lub seniorska?",tr:"Öğrenci veya yaşlı indiriminiz var mı?",en:"Are you eligible for a student or senior discount?",fr:"Bénéficiez-vous d'une réduction étudiante ou senior ?",de:"Haben Sie Anspruch auf Studenten- oder Seniorenrabatt?",es:"¿Tiene derecho a descuento de estudiante o senior?"},
+      {pl:"Nie, poproszę zwykły bilet normalny w jedną stronę.",tr:"Hayır, tek yön normal tam bilet istiyorum, lütfen.",en:"No, a standard one-way ticket, please.",fr:"Non, un billet plein tarif aller simple, s'il vous plaît.",de:"Nein, bitte eine normale Einzelfahrkarte.",es:"No, un billete normal de solo ida, por favor."},
+      {pl:"Czy mogę od razu kupić bilet powrotny na niedzielę?",tr:"Pazar günü için dönüş biletini de şimdiden alabilir miyim?",en:"Can I also buy the return ticket for Sunday right now?",fr:"Puis-je acheter le billet retour pour dimanche maintenant ?",de:"Kann ich gleich die Rückfahrkarte für Sonntag kaufen?",es:"¿Puedo comprar ya el billete de vuelta para el domingo?"},
+      {pl:"Oczywiście, bilet powrotny daje dziesięć procent zniżki.",tr:"Elbette, dönüş bileti yüzde on indirim sağlıyor.",en:"Of course, a return ticket gives a ten percent discount.",fr:"Bien sûr, l'aller-retour offre dix pour cent de réduction.",de:"Natürlich, die Rückfahrkarte gibt zehn Prozent Rabatt.",es:"Por supuesto, el billete de vuelta tiene un diez por ciento de descuento."},
+      {pl:"W takim razie poproszę bilet w obie strony na niedzielę wieczór.",tr:"O halde Pazar akşamı için gidiş-dönüş bilet istiyorum.",en:"In that case, a round-trip ticket for Sunday evening, please.",fr:"Dans ce cas, un aller-retour pour dimanche soir.",de:"Dann bitte eine Hin- und Rückfahrkarte für Sonntagabend.",es:"En ese caso, un billete de ida y vuelta para el domingo por la tarde."},
+      {pl:"Czy muszę dopłacić za duży bagaż lub walizkę?",tr:"Büyük bagaj veya valiz için ek ücret ödemem gerekiyor mu?",en:"Do I have to pay extra for large luggage or a suitcase?",fr:"Dois-je payer un supplément pour une grande valise ?",de:"Muss ich für großes Gepäck oder einen Koffer zuzahlen?",es:"¿Tengo que pagar suplemento por equipaje grande o maleta?"},
+      {pl:"Nie, bagaż podręczny i jedna duża walizka są bezpłatne.",tr:"Hayır, el bagajı ve bir büyük valiz ücretsizdir.",en:"No, hand luggage and one large suitcase are free.",fr:"Non, le bagage à main et une grande valise sont gratuits.",de:"Nein, Handgepäck und ein großer Koffer sind kostenlos.",es:"No, el equipaje de mano y una maleta grande son gratis."},
+      {pl:"Ile kosztują oba bilety razem?",tr:"Her iki bilet toplam ne kadar tutuyor?",en:"How much do both tickets cost together?",fr:"Combien coûtent les deux billets ensemble ?",de:"Wie viel kosten beide Fahrkarten zusammen?",es:"¿Cuánto cuestan los dos billetes juntos?"},
+      {pl:"Sto trzydzieści pięć złotych za przejazd w obie strony.",tr:"Gidiş-dönüş yolculuk için yüz otuz beş zloti.",en:"One hundred thirty-five zlotys for the round trip.",fr:"Cent trente-cinq zlotys pour l'aller-retour.",de:"Einhundertfünfunddreißig Zloty für Hin- und Rückfahrt.",es:"Ciento treinta y cinco zlotys por ida y vuelta."},
+      {pl:"Płacę kartą. Czy dostanę bilet papierowy czy elektroniczny?",tr:"Kartla ödüyorum. Kağıt bilet mi yoksa elektronik bilet mi alacağım?",en:"I'm paying by card. Will I get a paper or electronic ticket?",fr:"Je paye par carte. Aurai-je un billet papier ou numérique ?",de:"Ich zahle mit Karte. Bekomme ich ein Papier- oder Online-Ticket?",es:"Pago con tarjeta. ¿Recibiré billete en papel o electrónico?"},
+      {pl:"Drukuję bilet papierowy, ale może pan też zeskanować kod QR.",tr:"Kağıt bileti yazdırıyorum ama QR kodu da tarayabilirsiniz.",en:"I'm printing the paper ticket, or you can scan the QR code.",fr:"J'imprime le billet papier, ou scannez le code QR.",de:"Ich drucke das Papierticket, oder Sie scannen den QR-Code.",es:"Imprimo el billete en papel, o puede escanear el código QR."},
+      {pl:"Z którego peronu i toru odjeżdża mój pociąg?",tr:"Trenim hangi peron ve hattan kalkıyor?",en:"From which platform and track does my train depart?",fr:"De quel quai et de quelle voie part mon train ?",de:"Von welchem Bahnsteig und Gleis fährt mein Zug ab?",es:"¿De qué andén y vía sale mi tren?"},
+      {pl:"Z peronu trzeciego, przy torze drugim.",tr:"Üçüncü peron, ikinci hattan.",en:"From platform three, at track two.",fr:"Du quai numéro trois, voie deux.",de:"Von Bahnsteig drei, Gleis zwei.",es:"Del andén número tres, vía dos."},
+      {pl:"Jak dojść z hali głównej na peron trzeci?",tr:"Ana salondan üçüncü perona nasıl gidilir?",en:"How do I get from the main hall to platform three?",fr:"Comment aller du hall principal au quai trois ?",de:"Wie komme ich von der Haupthalle zu Bahnsteig drei?",es:"¿Cómo llego desde el vestíbulo principal al andén tres?"},
+      {pl:"Proszę zejść schodami do przejścia podziemnego po prawej.",tr:"Sağ taraftaki alt geçit merdivenlerinden aşağı inin.",en:"Go down the stairs to the underpass on the right.",fr:"Descendez les escaliers du passage souterrain à droite.",de:"Gehen Sie rechts die Treppe zur Unterführung hinunter.",es:"Baje las escaleras al paso subterráneo a la derecha."},
+      {pl:"Czy na dworcu jest winda dla osób z walizkami?",tr:"İstasyonda valizli yolcular için asansör var mı?",en:"Is there an elevator at the station for people with suitcases?",fr:"Y a-t-il un ascenseur à la gare pour les valises ?",de:"Gibt es am Bahnhof einen Aufzug für Reisende mit Koffern?",es:"¿Hay ascensor en la estación para personas con maletas?"},
+      {pl:"Tak, winda znajduje się tuż obok tablicy odjazdów.",tr:"Evet, asansör hemen kalkış panosunun yanında bulunuyor.",en:"Yes, the elevator is right next to the departure board.",fr:"Oui, l'ascenseur est juste à côté du panneau des départs.",de:"Ja, der Aufzug befindet sich direkt neben der Abfahrtstafel.",es:"Sí, el ascensor está justo al lado del panel de salidas."},
+      {pl:"Czy pociąg ma dzisiaj jakieś opóźnienie?",tr:"Bugün trenin herhangi bir gecikmesi var mı?",en:"Does the train have any delay today?",fr:"Le train a-t-il du retard aujourd'hui ?",de:"Hat der Zug heute Verspätung?",es:"¿Tiene algún retraso el tren hoy?"},
+      {pl:"Nie, pociąg podstawia się punktualnie za dziesięć minut.",tr:"Hayır, tren on dakika içinde tam vaktinde perona yanaşıyor.",en:"No, the train arrives at the platform on time in ten minutes.",fr:"Non, le train arrive à quai à l'heure dans dix minutes.",de:"Nein, der Zug fährt in zehn Minuten pünktlich ein.",es:"No, el tren llega al andén puntual en diez minutos."},
+      {pl:"Czy w pociągu jest wagon restauracyjny Wars?",tr:"Trende yemekli vagon mevcut mu?",en:"Is there a dining car on the train?",fr:"Y a-t-il une voiture-restaurant dans le train ?",de:"Gibt es einen Speisewagen im Zug?",es:"¿Hay coche restaurante en el tren?"},
+      {pl:"Tak, wagon restauracyjny znajduje się w środku składu. Szczęśliwej podróży!",tr:"Evet, yemekli vagon trenin ortasında yer alıyor. İyi yolculuklar!",en:"Yes, the dining car is in the middle of the train. Safe travels!",fr:"Oui, la voiture-restaurant est au milieu du train. Bon voyage !",de:"Ja, der Speisewagen ist in der Mitte des Zuges. Gute Reise!",es:"Sí, el coche restaurante está en medio del tren. ¡Buen viaje!"}
+    ]
+  },
+  {
+    id:3,e:"🍽️",lv:"A1",
+    title:{pl:"Restauracja & Kawiarnia",tr:"Restoran & Kafe",en:"Restaurant & Café",fr:"Restaurant & Café",de:"Restaurant & Café",es:"Restaurante y Café"},
+    cast:{pl:["Gość","Kelnerka"],tr:["Müşteri","Garson"],en:["Guest","Waiter"],fr:["Client","Serveur"],de:["Gast","Kellner"],es:["Cliente","Camarero"]},
+    lines:[
+      {pl:"Dzień dobry, czy mają państwo wolny stolik dla dwóch osób?",tr:"İyi günler, iki kişilik boş masanız var mı?",en:"Good afternoon, do you have a free table for two people?",fr:"Bonjour, avez-vous une table libre pour deux personnes ?",de:"Guten Tag, haben Sie einen freien Tisch für zwei Personen?",es:"Buenas tardes, ¿tienen una mesa libre para dos personas?"},
+      {pl:"Dzień dobry! Tak, zapraszam do stolika przy oknie.",tr:"İyi günler! Evet, pencere kenarındaki masaya buyurun.",en:"Good afternoon! Yes, please come to the table by the window.",fr:"Bonjour ! Oui, je vous invite à la table près de la fenêtre.",de:"Guten Tag! Ja, bitte nehmen Sie am Fensterplatz Platz.",es:"¡Buenas tardes! Sí, pasen a la mesa junto a la ventana."},
+      {pl:"Czy możemy prosić o kartę dań oraz kartę napojów?",tr:"Yemek menüsünü ve içecek listesini rica edebilir miyiz?",en:"Could we ask for the food menu and the drink list?",fr:"Pouvons-nous avoir la carte des plats et des boissons ?",de:"Könnten wir bitte die Speisekarte und Getränkekarte haben?",es:"¿Podemos pedir la carta de comidas y de bebidas?"},
+      {pl:"Oczywiście, oto menu po polsku i po angielsku.",tr:"Elbette, işte yerel dilde ve İngilizce menü.",en:"Of course, here is the menu in the local language and English.",fr:"Bien sûr, voici le menu en français et en anglais.",de:"Natürlich, hier ist die Speisekarte auf Deutsch und Englisch.",es:"Por supuesto, aquí tiene el menú en español e inglés."},
+      {pl:"Co poleca pani dzisiaj z tradycyjnej kuchni?",tr:"Bugün geleneksel mutfaktan ne tavsiye edersiniz?",en:"What do you recommend today from traditional cuisine?",fr:"Que recommandez-vous aujourd'hui de la cuisine traditionnelle ?",de:"Was empfehlen Sie heute aus der traditionellen Küche?",es:"¿Qué nos recomienda hoy de la cocina tradicional?"},
+      {pl:"Gorąco polecam domowy żurek oraz pierogi ruskie.",tr:"Ev yapımı geleneksel çorbayı ve mantıyı şiddetle tavsiye ederim.",en:"I warmly recommend the homemade soup and traditional dumplings.",fr:"Je recommande vivement la soupe maison et le plat du jour.",de:"Ich empfehle wärmstens die hausgemachte Tagessuppe.",es:"Recomiendo mucho la sopa casera y el plato tradicional."},
+      {pl:"Czy pierogi są podawane ze śmietaną czy z cebulką?",tr:"Yemek krema ile mi yoksa karamelize soğanla mı servis ediliyor?",en:"Is the dish served with sour cream or fried onions?",fr:"Le plat est-il servi avec de la crème ou des oignons ?",de:"Wird das Gericht mit Sauerrahm oder Röstzwiebeln serviert?",es:"¿El plato se sirve con crema agria o cebolla frita?"},
+      {pl:"Możemy podać je z zeszkloną cebulką albo ze śmietaną.",tr:"Hem kavrulmuş soğanla hem de krema ile servis edebiliriz.",en:"We can serve them with sautéed onions or sour cream.",fr:"Nous pouvons le servir avec des oignons ou de la crème.",de:"Wir können es mit gedünsteten Zwiebeln oder Rahm servieren.",es:"Podemos servirlo con cebolla pochada o crema agria."},
+      {pl:"Czy mają państwo w menu dania wegetariańskie?",tr:"Menünüzde vejetaryen yemekler mevcut mu?",en:"Do you have vegetarian dishes on the menu?",fr:"Avez-vous des plats végétariens au menu ?",de:"Haben Sie vegetarische Gerichte auf der Speisekarte?",es:"¿Tienen platos vegetarianos en el menú?"},
+      {pl:"Tak, mamy pierogi ze szpinakiem oraz świeże sałatki.",tr:"Evet, ıspanaklı ana yemeğimiz ve taze salatalarımız var.",en:"Yes, we have spinach specialties and fresh salads.",fr:"Oui, nous avons des spécialités aux épinards et des salades.",de:"Ja, wir haben Spinatgerichte und frische Salate.",es:"Sí, tenemos especialidades de espinacas y ensaladas frescas."},
+      {pl:"Czy to danie zawiera orzechy albo gluten?",tr:"Bu yemek kuruyemiş veya glüten içeriyor mu?",en:"Does this dish contain nuts or gluten?",fr:"Ce plat contient-il des noix ou du gluten ?",de:"Enthält dieses Gericht Nüsse oder Gluten?",es:"¿Este plato contiene frutos secos o gluten?"},
+      {pl:"Nie zawiera orzechów, ale w cieście jest mąka pszenna.",tr:"Kuruyemiş içermez ancak hamurunda buğday unu vardır.",en:"It contains no nuts, though there is wheat flour in the dough.",fr:"Il ne contient pas de noix, mais il y a de la farine de blé.",de:"Es enthält keine Nüsse, aber Weizenmehl im Teig.",es:"No contiene frutos secos, pero lleva harina de trigo."},
+      {pl:"Rozumiem, w takim razie wybiorę grillowanego łososia z warzywami.",tr:"Anladım, o halde sebzeli ızgara somon seçeceğim.",en:"I understand, in that case I'll choose grilled salmon with vegetables.",fr:"Je comprends, je vais choisir le saumon grillé aux légumes.",de:"Verstehe, dann wähle ich den gegrillten Lachs mit Gemüse.",es:"Entiendo, en ese caso elegiré el salmón a la plancha con verduras."},
+      {pl:"A dla drugiej osoby poproszę zupę dnia i pierogi.",tr:"İkinci kişi için de günün çorbasını ve ana yemeği rica ediyorum.",en:"And for the second person, the soup of the day and main dish, please.",fr:"Et pour la deuxième personne, la soupe du jour et le plat.",de:"Und für die zweite Person bitte die Tagessuppe und das Hauptgericht.",es:"Y para la segunda persona, la sopa del día y el plato principal."},
+      {pl:"Co podać państwu do picia przed posiłkiem?",tr:"Yemekten önce içmek için size ne getirebilirim?",en:"What can I bring you to drink before the meal?",fr:"Que puis-je vous servir à boire avant le repas ?",de:"Was darf ich Ihnen vor dem Essen zu trinken bringen?",es:"¿Qué les traigo de beber antes de la comida?"},
+      {pl:"Poprosimy dużą karafkę wody niegazowanej z cytryną.",tr:"Limonlu büyük bir sürahi gazsız su rica ediyoruz.",en:"We'd like a large carafe of still water with lemon.",fr:"Nous voudrions une grande carafe d'eau plate citronnée.",de:"Wir hätten gerne eine große Karaffe stilles Wasser mit Zitrone.",es:"Quisiéramos una jarra grande de agua sin gas con limón."},
+      {pl:"Czy podać również kawę lub świeży sok pomarańczowy?",tr:"Kahve veya taze sıkılmış portakal suyu da getireyim mi?",en:"Should I also bring coffee or fresh orange juice?",fr:"Dois-je aussi apporter du café ou du jus d'orange frais ?",de:"Soll ich auch Kaffee oder frischen Orangensaft bringen?",es:"¿Traigo también café o zumo de naranja natural?"},
+      {pl:"Tak, poprosimy dwa świeże soki pomarańczowe.",tr:"Evet, iki taze portakal suyu rica ediyoruz.",en:"Yes, two fresh orange juices, please.",fr:"Oui, deux jus d'orange frais, s'il vous plaît.",de:"Ja, bitte zwei frische Orangensäfte.",es:"Sí, dos zumos de naranja naturales, por favor."},
+      {pl:"Ile mniej więcej będziemy czekać na dania główne?",tr:"Ana yemekler için yaklaşık ne kadar bekleyeceğiz?",en:"Roughly how long will we wait for the main courses?",fr:"Combien de temps allons-nous attendre les plats principaux ?",de:"Wie lange werden wir ungefähr auf die Hauptgerichte warten?",es:"¿Cuánto esperaremos aproximadamente por los platos principales?"},
+      {pl:"Około piętnastu do dwudziestu minut, wszystko robimy na świeżo.",tr:"Yaklaşık on beş ila yirmi dakika, her şeyi taze hazırlıyoruz.",en:"About fifteen to twenty minutes, we prepare everything fresh.",fr:"Environ quinze à vingt minutes, tout est préparé minute.",de:"Etwa fünfzehn bis zwanzig Minuten, alles wird frisch zubereitet.",es:"Unos quince o veinte minutos, todo se prepara al momento."},
+      {pl:"Oto państwa napoje oraz ciepłe pieczywo z masłem.",tr:"İşte içecekleriniz ve tereyağlı sıcak ekmeğiniz.",en:"Here are your drinks and warm bread with butter.",fr:"Voici vos boissons et du pain chaud avec du beurre.",de:"Hier sind Ihre Getränke und warmes Brot mit Butter.",es:"Aquí tienen sus bebidas y pan caliente con mantequilla."},
+      {pl:"Dziękujemy, wszystko wygląda wspaniale.",tr:"Teşekkür ederiz, her şey harika görünüyor.",en:"Thank you, everything looks wonderful.",fr:"Merci, tout a l'air magnifique.",de:"Danke, alles sieht wunderbar aus.",es:"Gracias, todo tiene una pinta estupenda."},
+      {pl:"Życzę państwu smacznego! Gdyby czegoś brakowało, proszę dać znać.",tr:"Afiyet olsun! Bir eksiğiniz olursa lütfen haber verin.",en:"Enjoy your meal! If anything is missing, please let me know.",fr:"Bon appétit ! S'il manque quoi que ce soit, faites signe.",de:"Guten Appetit! Falls etwas fehlt, geben Sie bitte Bescheid.",es:"¡Buen provecho! Si falta algo, por favor avísenme."},
+      {pl:"Przepraszam, czy mogę prosić o dodatkową serwetkę i sól?",tr:"Affedersiniz, ek bir peçete ve tuz rica edebilir miyim?",en:"Excuse me, could I ask for an extra napkin and salt?",fr:"Excusez-moi, puis-je avoir une serviette et du sel ?",de:"Entschuldigung, könnte ich bitte eine Serviette und Salz haben?",es:"Disculpe, ¿me puede traer una servilleta extra y sal?"},
+      {pl:"Już przynoszę. Czy wszystko państwu smakuje?",tr:"Hemen getiriyorum. Her şey damak tadınıza uygun mu?",en:"Bringing it right away. Is everything tasting good to you?",fr:"J'arrive tout de suite. Tout est à votre goût ?",de:"Bringe ich sofort. Schmeckt Ihnen alles gut?",es:"Enseguida lo traigo. ¿Les gusta todo?"},
+      {pl:"Wszystko było przepyszne! Dziękujemy bardzo.",tr:"Her şey çok lezzetliydi! Çok teşekkür ederiz.",en:"Everything was delicious! Thank you very much.",fr:"Tout était délicieux ! Merci beaucoup.",de:"Alles war köstlich! Vielen Dank.",es:"¡Todo estaba delicioso! Muchas gracias."},
+      {pl:"Czy mają państwo ochotę na domowy deser i kawę?",tr:"Ev yapımı tatlı ve kahve ister misiniz?",en:"Would you like homemade dessert and coffee?",fr:"Avez-vous envie d'un dessert maison et d'un café ?",de:"Hätten Sie Lust auf ein hausgemachtes Dessert und Kaffee?",es:"¿Les apetece un postre casero y un café?"},
+      {pl:"Dziękujemy, jesteśmy już najedzeni. Poprosimy o rachunek.",tr:"Teşekkürler, doyduk. Hesabı rica ediyoruz.",en:"Thank you, we are already full. We'd like the bill, please.",fr:"Merci, nous n'avons plus faim. L'addition, s'il vous plaît.",de:"Danke, wir sind schon satt. Wir hätten gerne die Rechnung.",es:"Gracias, ya estamos llenos. La cuenta, por favor."},
+      {pl:"Czy zapłacą państwo razem czy osobno?",tr:"Hesabı birlikte mi yoksa ayrı ayrı mı ödeyeceksiniz?",en:"Will you pay together or separately?",fr:"Allez-vous payer ensemble ou séparément ?",de:"Möchten Sie zusammen oder getrennt bezahlen?",es:"¿Van a pagar juntos o por separado?"},
+      {pl:"Zapłacimy razem kartą płatniczą.",tr:"Banka kartıyla birlikte ödeyeceğiz.",en:"We will pay together by debit card.",fr:"Nous allons payer ensemble par carte bancaire.",de:"Wir zahlen zusammen mit Karte.",es:"Pagaremos juntos con tarjeta."},
+      {pl:"Oto rachunek i terminal. Dziękujemy za wizytę w naszej restauracji!",tr:"İşte hesap ve pos cihazı. Restoranımızı ziyaret ettiğiniz için teşekkürler!",en:"Here is the bill and terminal. Thank you for visiting our restaurant!",fr:"Voici l'addition et le terminal. Merci de votre visite !",de:"Hier sind Rechnung und Terminal. Vielen Dank für Ihren Besuch!",es:"Aquí tiene la cuenta y el datáfono. ¡Gracias por su visita!"},
+      {pl:"Dziękujemy, na pewno wrócimy! Do widzenia!",tr:"Teşekkürler, kesinlikle tekrar geleceğiz! Hoşça kalın!",en:"Thank you, we will definitely come back! Goodbye!",fr:"Merci, nous reviendrons certainement ! Au revoir !",de:"Danke, wir kommen bestimmt wieder! Auf Wiedersehen!",es:"¡Gracias, seguro que volveremos! ¡Adiós!"}
+    ]
+  }
+];
+
+const EXTRA_SCENES_SPEC=[
+  {id:4,e:"🏛️",lv:"B1",t:["Urząd & Rejestracja","Belediye & Kayıt","City Hall & Registration","Mairie & Inscription","Bürgeramt & Anmeldung","Ayuntamiento y Registro"],c:[["Wnioskodawca","Urzędnik"],["Başvuru Sahibi","Memur"],["Applicant","Clerk"],["Demandeur","Agent"],["Antragsteller","Sachbearbeiter"],["Solicitante","Funcionario"]],ctx:["PESEL","ikametgah","residence permit","titre de séjour","Wohnsitz","empadronamiento"]},
+  {id:5,e:"💊",lv:"A2",t:["Apteka & Lekarz","Eczane & Doktor","Pharmacy & Doctor","Pharmacie & Médecin","Apotheke & Arzt","Farmacia y Médico"],c:[["Pacjent","Farmaceuta"],["Hasta","Eczacı"],["Patient","Pharmacist"],["Patient","Pharmacien"],["Patient","Apotheker"],["Paciente","Farmacéutico"]],ctx:["przeziębienie","soğuk algınlığı","cold symptoms","rhume","Erkältung","resfriado"]},
+  {id:6,e:"🔑",lv:"B1",t:["Wynajem Mieszkania","Ev Kiralama","Renting an Apartment","Location d'Appartement","Wohnung Mieten","Alquiler de Piso"],c:[["Najemca","Właściciel"],["Kiracı","Ev Sahibi"],["Tenant","Landlord"],["Locataire","Propriétaire"],["Mieter","Vermieter"],["Inquilino","Propietario"]],ctx:["umowa najmu","kira sözleşmesi","lease agreement","contrat de location","Mietvertrag","contrato de alquiler"]},
+  {id:7,e:"📦",lv:"A2",t:["Poczta & Paczki","Postane & Kargo","Post Office & Parcels","La Poste & Colis","Post & Pakete","Correos y Paquetes"],c:[["Nadawca","Pracownik"],["Gönderici","Memur"],["Sender","Clerk"],["Expéditeur","Guichetier"],["Absender","Beamter"],["Remitente","Empleado"]],ctx:["paczka priorytetowa","öncelikli koli","priority parcel","colis prioritaire","Prioritätspaket","paquete prioritario"]},
+  {id:8,e:"🚋",lv:"A1",t:["Komunikacja Miejska","Şehir İçi Ulaşım","Public Transport","Transports en Commun","Öffentlicher Nahverkehr","Transporte Público"],c:[["Pasażer","Mieszkaniec"],["Yolcu","Yerel Kişi"],["Passenger","Local"],["Passager","Habitant"],["Fahrgast","Einheimischer"],["Pasajero","Local"]],ctx:["bilet tramwajowy","tramvay bileti","transit ticket","ticket de métro","Fahrkarte","billete de metro"]},
+  {id:9,e:"🏦",lv:"B1",t:["Bank & Konto Osobiste","Banka & Hesap Açma","Bank & Personal Account","Banque & Compte","Bank & Girokonto","Banco y Cuenta"],c:[["Klient","Doradca"],["Müşteri","Danışman"],["Client","Advisor"],["Client","Conseiller"],["Kunde","Berater"],["Cliente","Asesor"]],ctx:["konto bankowe","banka hesabı","bank account","compte bancaire","Bankkonto","cuenta bancaria"]},
+  {id:10,e:"💼",lv:"B1",t:["Rozmowa o Pracę","İş Görüşmesi","Job Interview","Entretien d'Embauche","Vorstellungsgespräch","Entrevista de Trabajo"],c:[["Kandydat","Rekruter"],["Aday","İK Uzmanı"],["Candidate","Recruiter"],["Candidat","Recruteur"],["Bewerber","Personaler"],["Candidato","Reclutador"]],ctx:["doświadczenie zawodowe","iş deneyimi","work experience","expérience professionnelle","Berufserfahrung","experiencia laboral"]}
+];
+
+const EXTRA_TEMPLATES=[
+  ["Dzień dobry, chciałbym załatwić sprawę związaną z: {0}.","Günaydın, şu konuyla ilgili işlem yapmak istiyorum: {0}.","Good morning, I would like to handle a matter regarding: {0}.","Bonjour, je voudrais régler une démarche concernant : {0}.","Guten Morgen, ich möchte eine Angelegenheit regeln bezüglich: {0}.","Buenos días, quisiera gestionar un asunto relacionado con: {0}."],
+  ["Dzień dobry! Proszę usiąść, w czym mogę dokładnie pomóc?","Günaydın! Lütfen oturun, tam olarak nasıl yardımcı olabilirim?","Good morning! Please have a seat, how exactly can I help?","Bonjour ! Asseyez-vous, comment puis-je vous aider exactement ?","Guten Morgen! Bitte nehmen Sie Platz, wie genau kann ich helfen?","¡Buenos días! Siéntese por favor, ¿en qué puedo ayudarle exactamente?"],
+  ["Potrzebuję szczegółowych informacji oraz formularza zgłoszeniowego.","Detaylı bilgiye ve başvuru formuna ihtiyacım var.","I need detailed information and the application form.","J'ai besoin d'informations détaillées et du formulaire.","Ich brauche genaue Informationen und das Antragsformular.","Necesito información detallada y el formulario de solicitud."],
+  ["Czy ma pan przy sobie ważny paszport lub dowód osobisty?","Yanınızda geçerli pasaportunuz veya kimlik kartınız var mı?","Do you have a valid passport or ID card with you?","Avez-vous votre passeport ou pièce d'identité valide ?","Haben Sie einen gültigen Reisepass oder Personalausweis dabei?","¿Lleva consigo su pasaporte o documento de identidad vigente?"],
+  ["Tak, mam przy sobie paszport oraz potwierdzenie adresu.","Evet, pasaportum ve adres belgem yanımda.","Yes, I have my passport and proof of address with me.","Oui, j'ai mon passeport et mon justificatif de domicile.","Ja, ich habe meinen Reisepass und Adressnachweis dabei.","Sí, llevo mi pasaporte y el comprobante de domicilio."],
+  ["Doskonale, to znacznie przyspieszy całą procedurę.","Mükemmel, bu tüm süreci oldukça hızlandıracaktır.","Excellent, that will speed up the entire procedure significantly.","Parfait, cela va accélérer toute la procédure.","Ausgezeichnet, das beschleunigt das gesamte Verfahren erheblich.","Excelente, eso acelerará mucho todo el procedimiento."],
+  ["Jakie są dokładne warunki oraz opłaty administracyjne?","Kesin şartlar ve idari ücretler nelerdir?","What are the exact conditions and administrative fees?","Quelles sont les conditions exactes et les frais ?","Was sind die genauen Bedingungen und Gebühren?","¿Cuáles son las condiciones exactas y las tasas administrativas?"],
+  ["Podstawowa obsługa i rejestracja są całkowicie bezpłatne.","Temel hizmet ve kayıt tamamen ücretsizdir.","Basic service and registration are completely free of charge.","Le service de base et l'inscription sont gratuits.","Die Grundleistung und Anmeldung sind völlig kostenlos.","El servicio básico y el registro son completamente gratuitos."],
+  ["Ile dni roboczych trzeba czekać na oficjalne potwierdzenie?","Resmi onay için kaç iş günü beklemek gerekiyor?","How many business days does it take for official confirmation?","Combien de jours ouvrés faut-il attendre la confirmation ?","Wie viele Werktage dauert die offizielle Bestätigung?","¿Cuántos días hábiles hay que esperar para la confirmación?"],
+  ["Zazwyczaj trwa to od trzech do pięciu dni roboczych.","Genellikle üç ila beş iş günü sürer.","It usually takes between three and five business days.","Cela prend généralement trois à cinq jours ouvrés.","Normalerweise dauert es drei bis fünf Werktage.","Normalmente tarda entre tres y cinco días hábiles."],
+  ["Czy mogę otrzymać potwierdzenie również drogą mailową?","Onayı e-posta yoluyla da alabilir miyim?","Can I also receive the confirmation via email?","Puis-je recevoir la confirmation par e-mail également ?","Kann ich die Bestätigung auch per E-Mail erhalten?","¿Puedo recibir también la confirmación por correo electrónico?"],
+  ["Tak, wyślemy wiadomość SMS oraz kopię na adres e-mail.","Evet, SMS ve e-posta adresinize bir kopya göndereceğiz.","Yes, we will send an SMS and a copy to your email address.","Oui, nous enverrons un SMS et une copie par e-mail.","Ja, wir senden eine SMS und eine Kopie an Ihre E-Mail.","Sí, enviaremos un SMS y una copia a su correo electrónico."],
+  ["Proszę wpisać swoje imię, nazwisko oraz aktualny numer telefonu.","Lütfen adınızı, soyadınızı ve güncel telefon numaranızı yazın.","Please enter your first name, last name, and current phone number.","Veuillez inscrire votre prénom, nom et numéro de téléphone.","Bitte tragen Sie Vorname, Nachname und Telefonnummer ein.","Por favor escriba su nombre, apellido y teléfono actual."],
+  ["Czy powinienem wpisać adres zameldowania czy korespondencyjny?","İkamet adresini mi yoksa yazışma adresini mi yazmalıyım?","Should I enter my registered address or mailing address?","Dois-je indiquer l'adresse officielle ou postale ?","Soll ich die Meldeadresse oder Postadresse angeben?","¿Debo poner la dirección de empadronamiento o la postal?"],
+  ["Proszę wpisać adres, pod którym obecnie pan mieszka.","Lütfen şu an ikamet ettiğiniz adresi yazın.","Please enter the address where you currently live.","Veuillez indiquer l'adresse où vous habitez actuellement.","Bitte geben Sie die Adresse an, an der Sie derzeit wohnen.","Por favor indique la dirección donde vive actualmente."],
+  ["Czy wszystkie pola w tym dokumencie są obowiązkowe?","Bu belgedeki tüm alanların doldurulması zorunlu mu?","Are all fields in this document mandatory?","Tous les champs de ce document sont-ils obligatoires ?","Sind alle Felder in diesem Dokument Pflichtfelder?","¿Son obligatorios todos los campos de este documento?"],
+  ["Obowiązkowe są tylko pola oznaczone małą gwiazdką.","Sadece küçük yıldızla işaretli alanlar zorunludur.","Only the fields marked with a small asterisk are mandatory.","Seuls les champs marqués d'un astérisque sont obligatoires.","Pflichtfelder sind nur die mit einem Sternchen markierten.","Solo son obligatorios los campos marcados con un asterisco."],
+  ["Rozumiem, wypełniam wszystko drukowanymi literami.","Anladım, her şeyi büyük harflerle dolduruyorum.","I understand, I am filling everything out in block letters.","Je comprends, je remplis tout en lettres majuscules.","Verstehe, ich fülle alles in Druckbuchstaben aus.","Entiendo, lo relleno todo en letras mayúsculas."],
+  ["Czy potrzebuje pan długopisu albo dodatkowej kopii formularza?","Tükenmez kaleme veya formun ek bir kopyasına ihtiyacınız var mı?","Do you need a pen or an extra copy of the form?","Avez-vous besoin d'un stylo ou d'une copie supplémentaire ?","Brauchen Sie einen Stift oder eine weitere Kopie?","¿Necesita un bolígrafo o una copia adicional del formulario?"],
+  ["Dziękuję, mam własny długopis. Gdzie mam złożyć podpis?","Teşekkürler, kendi kalemim var. İmzayı nereye atmalıyım?","Thank you, I have my own pen. Where should I sign?","Merci, j'ai mon propre stylo. Où dois-je signer ?","Danke, ich habe einen eigenen Stift. Wo soll ich unterschreiben?","Gracias, tengo mi propio bolígrafo. ¿Dónde debo firmar?"],
+  ["Proszę podpisać czytelnie na samym dole drugiej strony.","Lütfen ikinci sayfanın en altına okunaklı şekilde imzalayın.","Please sign legibly at the very bottom of the second page.","Veuillez signer lisiblement tout en bas de la deuxième page.","Bitte unterschreiben Sie leserlich ganz unten auf Seite zwei.","Por favor firme de forma legible al final de la segunda página."],
+  ["Czy wymagana jest jeszcze jakaś pieczątka lub załącznik?","Başka bir mühür veya ek belge gerekiyor mu?","Is any additional stamp or attachment required?","Faut-il un autre cachet ou une pièce jointe ?","Ist noch ein Stempel oder Anhang erforderlich?","¿Se requiere algún sello o documento adjunto más?"],
+  ["Nie, komplet dokumentów jest już pełny i poprawny.","Hayır, belge seti artık eksiksiz ve doğru.","No, the set of documents is now complete and accurate.","Non, le dossier est maintenant complet et conforme.","Nein, die Unterlagen sind jetzt vollständig und korrekt.","No, el conjunto de documentos ya está completo y correcto."],
+  ["Kiedy dokładnie mogę odebrać gotowy dokument lub kartę?","Hazır belgeyi veya kartı tam olarak ne zaman teslim alabilirim?","When exactly can I pick up the finished document or card?","Quand exactement puis-je retirer le document ou la carte ?","Wann genau kann ich das fertige Dokument abholen?","¿Cuándo exactamente puedo recoger el documento o tarjeta?"],
+  ["Zapraszamy w przyszły czwartek od godziny dziewiątej rano.","Gelecek Perşembe sabah saat dokuzdan itibaren bekleriz.","You are welcome next Thursday starting at nine in the morning.","Vous pouvez passer jeudi prochain dès neuf heures.","Kommen Sie gerne nächsten Donnerstag ab neun Uhr vorbei.","Le esperamos el próximo jueves a partir de las nueve."],
+  ["Czy muszę wcześniej rezerwować wizytę przez internet?","Önceden internet üzerinden randevu almam gerekiyor mu?","Do I need to book an appointment online in advance?","Dois-je prendre rendez-vous en ligne à l'avance ?","Muss ich vorher online einen Termin vereinbaren?","¿Tengo que pedir cita previa por internet?"],
+  ["Do samego odbioru nie trzeba rezerwować kolejki.","Sadece teslim almak için sıra rezervasyonu gerekmiyor.","For pickup only, you do not need to book a queue slot.","Pour un simple retrait, il n'est pas nécessaire de réserver.","Für die reine Abholung müssen Sie keinen Termin buchen.","Solo para recoger no es necesario pedir cita."],
+  ["Czy ktoś inny może odebrać dokument w moim imieniu?","Benim adıma başka biri belgeyi teslim alabilir mi?","Can someone else pick up the document on my behalf?","Quelqu'un d'autre peut-il retirer le document pour moi ?", "Kann jemand anderes das Dokument für mich abholen?","¿Puede otra persona recoger el documento en mi nombre?"],
+  ["Tak, ale potrzebne będzie pisemne upoważnienie.","Evet, ancak yazılı vekaletname gerekecektir.","Yes, though a written authorization will be required.","Oui, mais il faudra une procuration écrite.","Ja, aber dafür ist eine schriftliche Vollmacht nötig.","Sí, pero hará falta una autorización por escrito."],
+  ["Wszystko jest dla mnie całkowicie jasne.","Her şey benim için tamamen net.","Everything is completely clear to me.","Tout est parfaitement clair pour moi.","Alles ist für mich völlig klar.","Todo está completamente claro para mí."],
+  ["Oto pana urzędowe potwierdzenie złożenia wniosku.","İşte başvurunuzu teslim ettiğinize dair resmi makbuzunuz.","Here is your official receipt confirming the submission.","Voici votre récépissé officiel de dépôt de dossier.","Hier ist Ihre offizielle Eingangsbestätigung.","Aquí tiene su resguardo oficial de presentación."],
+  ["Bardzo dziękuję za profesjonalną obsługę i pomoc!","Profesyonel hizmetiniz ve yardımınız için çok teşekkür ederim!","Thank you very much for the professional service and help!","Merci beaucoup pour votre service professionnel !","Vielen Dank für die professionelle Hilfe!","¡Muchas gracias por la atención profesional y la ayuda!"]
+];
+
+EXTRA_SCENES_SPEC.forEach(spec=>{
+  const lines=EXTRA_TEMPLATES.map(tpl=>{
+    const obj={};
+    ["pl","tr","en","fr","de","es"].forEach((code,ci)=>{
+      obj[code]=tpl[ci].replace("{0}",spec.ctx[ci]);
+    });
+    return obj;
+  });
+  MULTI_SCENES.push({
+    id:spec.id,e:spec.e,lv:spec.lv,
+    title:{pl:spec.t[0],tr:spec.t[1],en:spec.t[2],fr:spec.t[3],de:spec.t[4],es:spec.t[5]},
+    cast:{pl:spec.c[0],tr:spec.c[1],en:spec.c[2],fr:spec.c[3],de:spec.c[4],es:spec.c[5]},
+    lines
+  });
+});
+
+/* ===== State & Persistence ===== */
+const LV={A1:"Beginner",A2:"Elementary",B1:"Intermediate"};
+const D={A1:{},A2:{},B1:{}};
+let S={lvl:"A1",mode:"learn",cat:"All",i:0,flip:false,rev:false,q:null,score:0,n:0,done:false,sel:null,prog:{},ql:10,miss:[],typed:"",right:false};
+let V=[];try{V=JSON.parse(safeStore.get("pl-vocab2")||"[]")}catch(e){}
+const saveV=()=>{try{safeStore.set("pl-vocab2",JSON.stringify(V))}catch(e){}};
+let PW=[];try{PW=JSON.parse(safeStore.get("pl-words2")||"[]")}catch(e){}
+const savePW=()=>{try{safeStore.set("pl-words2",JSON.stringify(PW))}catch(e){}};
+let ST={d:{},goal:10,clips:[]};try{const x=JSON.parse(safeStore.get("pl-stats")||"null");if(x)ST=x}catch(e){}
+const dk=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const saveST=()=>{try{safeStore.set("pl-stats",JSON.stringify(ST))}catch(e){}};
+setInterval(()=>{if(!document.hidden){const k=dk(new Date());ST.d[k]=(ST.d[k]||0)+10;saveST()}},10000);
+function streak(){let n=0,d=new Date();if((ST.d[dk(d)]||0)<30)d.setDate(d.getDate()-1);while((ST.d[dk(d)]||0)>=30){n++;d.setDate(d.getDate()-1)}return n}
+
+function loadPairState(){
+  const pid=CUR_PAIR||"en-pl";
+  S.prog={};
+  try{
+    const p=safeStore.get("lp-prog-"+pid)||(pid==="en-pl"?safeStore.get("pl-prog2"):null);
+    if(p)S.prog=JSON.parse(p);
+    const l=safeStore.get("lp-lvl-"+pid)||safeStore.get("pl-lvl");
+    if(l&&LV[l])S.lvl=l;
+  }catch(e){}
+}
+const save=()=>{
+  const pid=CUR_PAIR||"en-pl";
+  try{
+    safeStore.set("lp-prog-"+pid,JSON.stringify(S.prog));
+    safeStore.set("lp-lvl-"+pid,S.lvl);
+    if(pid==="en-pl")safeStore.set("pl-prog2",JSON.stringify(S.prog));
+  }catch(e){}
+};
+function xp(n){S.prog._xp=(S.prog._xp||0)+n;save()}
+function setP(w,ok){S.prog[w[0]]=ok?(S.prog[w[0]]||0)+1:0;if(ok)xp(S.lvl==="B1"?3:S.lvl==="A2"?2:1);save()}
+
+let SC=[];
+function rebuildDictionary(){
+  const ap=getActivePair();
+  const srcCode=ap.src||"en";
+  const tgtCode=ap.tgt||"pl";
+
+  ["A1","A2","B1"].forEach(lv=>{D[lv]={};});
+  const seen=new Set();
+
+  [...EXPANDED_CONCEPTS, ...NUMBER_CONCEPTS].forEach(c=>{
+    const tgt=c[tgtCode]||c.pl;
+    const src=c[srcCode]||c.en;
+    const k=tgt.toLowerCase();
+    if(!tgt||!src||seen.has(k))return;
+    seen.add(k);
+    if(!D[c.lv][c.cat])D[c.lv][c.cat]=[];
+    D[c.lv][c.cat].push([tgt,"",src,{concept:c,cat:c.cat}]);
+  });
+
+  PW.filter(w=>(w.pairId||"en-pl")===CUR_PAIR).forEach(w=>{
+    const lv=LV[w.lvl]?w.lvl:"A1";
+    const cat=w.cat||"My Words";
+    if(!D[lv][cat])D[lv][cat]=[];
+    if(!seen.has(w.pl.toLowerCase())){
+      seen.add(w.pl.toLowerCase());
+      D[lv][cat].push([w.pl,w.pron||"",w.en,{cat}]);
+    }
+  });
+
+  ["A1","A2","B1"].forEach(lv=>{
+    if(!Object.keys(D[lv]).length)D[lv]["Vocabulary"]=[];
+  });
+
+  SC=MULTI_SCENES.map(sc=>({
+    id:sc.id,
+    e:sc.e,
+    l:`${sc.lv} · ${LV[sc.lv]}`,
+    t:sc.title[tgtCode]||sc.title.en,
+    sh:sc.title[srcCode]||sc.title.en,
+    cast:sc.cast.en,
+    L:sc.lines.map(ln=>[ln[tgtCode]||ln.en,ln[srcCode]||ln.en,ln])
+  }));
+}
+
+loadPairState();
+rebuildDictionary();
+
+const P=()=>{
+  const L=D[S.lvl]||{};
+  if(S.cat!=="All"&&L[S.cat])return L[S.cat];
+  return Object.entries(L).flatMap(([cat,arr])=>arr.map(w=>[w[0],w[1],w[2],{...(w[3]||{}),cat}]));
+};
+const all=()=>["A1","A2","B1"].flatMap(lv=>Object.values(D[lv]||{}).flat());
+function uniq(){
+  const m=new Map();
+  all().forEach(w=>{const k=w[0].toLowerCase();if(!m.has(k))m.set(k,w)});
+  return[...m.values()];
+}
+
+function smartLookup(rawWord){
+  const w=String(rawWord||"").toLowerCase().trim();
+  if(!w)return null;
+  const hit=all().find(x=>x[0].toLowerCase()===w||x[0].toLowerCase().endsWith(" "+w));
+  if(hit)return{pl:hit[0],en:hit[2],concept:hit[3]?.concept||null};
+  for(const sc of SC){
+    for(const line of sc.L){
+      const toks=line[0].toLowerCase().match(WORD_RE)||[];
+      if(toks.includes(w))return{pl:w,en:line[1],concept:line[2]||null};
+    }
+  }
+  return null;
+}
+
+/* ===== Navigation & Master Render ===== */
+function go(m){
+  clearTimeout(window.CT);
+  try{speechSynthesis.cancel()}catch(e){}
+  if(!["learn","quiz","srs","cine","wb","ai","langs","stats"].includes(m))m="learn";
+  S.mode=m;S.i=0;S.flip=false;
+  if(m==="quiz")newQuiz();
+  if(m==="srs")srsStart();
+  if(m==="ai")initAiChat(false);
+  render();
+}
+
+function renderMobileInstallBanner(){
+  const isStandalone=window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone===true;
+  if(isStandalone||safeStore.get("hide-pwa-banner")==="1")return "";
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
+  return `
+    <div class="install-banner">
+      <div style="font-size:12.5px;font-weight:800;color:var(--tx-dark);line-height:1.35">
+        📱 <b>Install as iPhone / Android App:</b><br>
+        ${isIOS
+          ? `Tap <b>Share (⎋)</b> in Safari → <b>“Add to Home Screen”</b>`
+          : DEFERRED_PROMPT
+            ? `Tap <b>Install App</b> for full-screen offline mode.`
+            : `Tap browser menu <b>(⋮ or ⎋)</b> → <b>“Add to Home Screen”</b>`}
+      </div>
+      <div style="display:flex;gap:6px;flex:none">
+        ${DEFERRED_PROMPT?`<button class="sm primary" onclick="triggerAndroidInstall()">Install</button>`:""}
+        <button class="sm" onclick="safeStore.set('hide-pwa-banner','1');render()">✕</button>
+      </div>
+    </div>
+  `;
+}
+
+async function triggerAndroidInstall(){
+  if(!DEFERRED_PROMPT)return;
+  DEFERRED_PROMPT.prompt();
+  await DEFERRED_PROMPT.userChoice;
+  DEFERRED_PROMPT=null;
+  render();
+}
+
+function render(){
+  const ap=getActivePair();
+  $("hud-flag").textContent=ap.flag||"🌐";
+  $("hud-pair").textContent=ap.short;
+  $("hud-strk").textContent=streak()+"d";
+  $("hud-xp").textContent=(S.prog._xp||0)+" XP";
+  $("pwa-banner-wrap").innerHTML=renderMobileInstallBanner();
+
+  const showLv=(S.mode==="learn"||S.mode==="quiz");
+  $("lv-wrap").innerHTML=showLv?`
+    <div class="lvl-bar">
+      ${Object.keys(LV).map(l=>{
+        const cnt=Object.values(D[l]||{}).reduce((s,a)=>s+a.length,0);
+        return `<button class="lvl-btn ${S.lvl===l?"on":""}" onclick="S.lvl='${l}';S.cat='All';save();go(S.mode)">
+          <b>${l} · ${LV[l]}</b>
+          <span>${cnt.toLocaleString()} words</span>
+        </button>`;
+      }).join("")}
+    </div>
+  `:"";
+
+  const L=D[S.lvl]||{};
+  if(S.cat!=="All"&&!L[S.cat])S.cat="All";
+  const allCnt=Object.values(L).reduce((s,a)=>s+a.length,0);
+  $("cat-wrap").innerHTML=showLv?`
+    <div class="cats">
+      <button class="cat-chip ${S.cat==="All"?"on":""}" onclick="S.cat='All';go(S.mode)">All (${allCnt.toLocaleString()})</button>
+      ${Object.keys(L).filter(c=>L[c].length>0).map(c=>`<button class="cat-chip ${S.cat===c?"on":""}" onclick="S.cat='${c.replace(/'/g,"\\'")}';go(S.mode)">${esc(c)} (${L[c].length.toLocaleString()})</button>`).join("")}
+    </div>
+  `:"";
+
+  const navItems=[
+    ["learn",`<svg class="ico" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 9h10M7 13h6"/></svg>`,"Learn"],
+    ["quiz",`<svg class="ico" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`,"Quiz"],
+    ["srs",`<svg class="ico" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>`,"Review"],
+    ["cine",`<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polygon points="16.2 7.8 14.1 14.1 7.8 16.2 9.9 9.9 16.2 7.8"/></svg>`,"Guide"],
+    ["ai",`<svg class="ico" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,"Web AI"],
+    ["wb",`<svg class="ico" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>`,"5K Dict"],
+    ["langs",`<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>`,"30 Pairs"]
+  ];
+  $("bottom-nav").innerHTML=navItems.map(([k,ic,lbl])=>`
+    <button class="nav-tab ${S.mode===k?"on":""}" onclick="go('${k}')">
+      <span class="ic">${ic}</span>
+      <span>${lbl}</span>
+    </button>
+  `).join("");
+
+  const m=$("main");
+  ({learn,quiz,srs,cine,ai,wb:wbk,langs,stats})[S.mode](m);
+}
+
+/* ===== 1. LEARN TAB ===== */
+function renderIntertwinedBridge(concept){
+  if(!concept)return "";
+  const codes=["pl","tr","en","fr","de","es"];
+  return `
+    <div style="width:100%;margin-top:8px;padding-top:10px;border-top:1.5px solid var(--surf-2)">
+      <div class="hint" style="font-size:11px;margin-bottom:4px">🌐 Intertwined Multi-Language Bridge (Tap any to hear):</div>
+      <div class="bridge-grid">
+        ${codes.map(c=>{
+          const meta=LANG_META[c];
+          const val=concept[c];
+          if(!val)return "";
+          return `<span class="bridge-pill" onclick="event.stopPropagation();speak('${esc(val)}',0.9,'${meta.speech}')">${meta.flag} ${esc(val)}</span>`;
+        }).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function learn(m){
+  const ap=getActivePair();
+  const p=P();
+  const learnedCnt=p.filter(x=>(S.prog[x[0]]||0)>=2).length;
+
+  if(!p.length){
+    m.innerHTML=`<div class="duo-card"><div class="hint">No words in ${S.lvl} (${LV[S.lvl]}). Switch levels above.</div></div>`;
+    return;
+  }
+
+  const idx=S.i%p.length;
+  const w=p[idx];
+  const mastered=(S.prog[w[0]]||0)>=2;
+
+  const numWidget = S.cat==="Numbers (0–1M)" ? `
+    <div class="num-lab">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <b style="font-size:13px;color:var(--tx-dark)">Instant Number Generator (0 – 1,000,000)</b>
+        <span class="badge">Live TTS</span>
+      </div>
+      <input type="number" min="0" max="1000000" inputmode="numeric" value="${NUM_VAL}" oninput="setNumLab(this.value)">
+      <div id="num-lab-out"></div>
+    </div>
+  ` : "";
+
+  m.innerHTML=numWidget+`
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span class="hint">${esc(ap.short)} · <b>${S.lvl}</b> · Card <b>${(idx+1).toLocaleString()}</b>/${p.length.toLocaleString()}</span>
+      <span class="badge ${mastered?"":"neutral"}">${mastered?"✓ Mastered":`${learnedCnt}/${p.length}`}</span>
+    </div>
+    <div class="duo-prog"><i style="width:${Math.min(100,(idx+1)/Math.min(50,p.length)*100)}%"></i></div>
+
+    <div class="duo-card" onclick="S.flip=!S.flip;render()">
+      <span class="badge">${esc(S.cat==="All"?(w[3]?.cat||S.lvl):S.cat)}</span>
+      ${!S.flip
+        ? `<div class="big-word">${esc(S.rev?w[2]:w[0])}</div>
+           <div class="hint">Tap card to flip &amp; see intertwined languages</div>`
+        : `<div class="big-word">${esc(S.rev?w[0]:w[2])}</div>
+           <div class="pron-pill">${ap.flag} ${esc(w[0])} · ${ap.srcFlag} ${esc(w[2])}</div>
+           ${renderIntertwinedBridge(w[3]?.concept)}`
+      }
+    </div>
+
+    <div class="row">
+      <button data-t="${esc(w[0])}" onclick="say(this)">🔊 Listen</button>
+      <button onclick="speak(P()[S.i%P().length][0],0.6)">🐢 Slow</button>
+      <button onclick="swapOppositeLanguage()">⇄ Opposite</button>
+    </div>
+    <div class="row">
+      <button class="outline-red" onclick="setP(P()[S.i%P().length],false);S.i++;S.flip=false;render()">↻ Again</button>
+      <button class="primary" onclick="setP(P()[S.i%P().length],true);S.i++;S.flip=false;render()">✓ Got It (+XP)</button>
+    </div>
+  `;
+  if(S.cat==="Numbers (0–1M)") renderNumLab();
+}
+
+/* ===== 2. TEXT-BASED QUIZ TAB ===== */
+const QM={
+  "src2tgt":"✍️ Translate to Target",
+  "tgt2src":"🔤 Translate to Source",
+  "listen":"🎧 Listen & Type"
+};
+
+function newQuiz(){
+  const ap=getActivePair();
+  const len=S.ql||10;
+  const mode=S.qm||"src2tgt";
+  const pool=sh(P().slice(0,250));
+  const qs=[];
+  for(let i=0;i<Math.min(len,pool.length);i++){
+    const w=pool[i];
+    if(mode==="tgt2src"){
+      qs.push({mode,w,prompt:w[0],ans:w[2],placeholder:`Type in ${ap.srcName}…`,hint:`Translate from ${ap.tgtName} to ${ap.srcName}`,say:w[0]});
+    }else if(mode==="listen"){
+      qs.push({mode,w,prompt:"",ans:w[0],placeholder:`Type the ${ap.tgtName} word you hear…`,hint:`Listen and type in ${ap.tgtName}`,say:w[0]});
+    }else{
+      qs.push({mode:"src2tgt",w,prompt:w[2],ans:w[0],placeholder:`Type in ${ap.tgtName}…`,hint:`Translate from ${ap.srcName} to ${ap.tgtName}`,say:w[0]});
+    }
+  }
+  S.q=qs;S.miss=[];S.n=0;S.score=0;S.done=false;S.sel=null;S.typed="";
+}
+
+function quiz(m){
+  const ap=getActivePair();
+  if(!S.q)newQuiz();
+
+  const modeBar=`
+    <div class="cats">
+      ${Object.entries(QM).map(([k,l])=>`<button class="cat-chip ${(S.qm||"src2tgt")===k?"on":""}" onclick="S.qm='${k}';newQuiz();render()">${l}</button>`).join("")}
+    </div>
+  `;
+
+  if(!S.q.length){
+    m.innerHTML=modeBar+`<div class="duo-card"><div class="hint">No words available in this filter.</div></div>`;
+    return;
+  }
+
+  if(S.done){
+    const pct=Math.round(S.score/S.q.length*100);
+    const miss=S.miss||[];
+    m.innerHTML=modeBar+`
+      <div class="duo-card" style="cursor:default">
+        <span class="badge">${esc(ap.short)} · ${S.lvl}</span>
+        <div class="big-word" style="font-size:42px;color:var(--ac)">${S.score} / ${S.q.length}</div>
+        <div class="pron-pill">${pct>=80?"🎉 Excellent!":pct>=50?"👏 Good Job!":"💪 Keep Practicing!"}</div>
+        <div class="hint">${pct}% accuracy · +${S.score*2} XP</div>
+      </div>
+      ${miss.length?`<div class="box" style="margin-top:12px"><b>Words to Review</b>${miss.map(q=>`<div class="stat-row"><span>${esc(q.prompt||q.w[2])}</span><b style="color:var(--ac)">${esc(q.ans)}</b></div>`).join("")}</div>`:""}
+      <div class="row">
+        ${miss.length?`<button class="outline-red" onclick="S.q=sh(S.miss);S.miss=[];S.n=0;S.score=0;S.done=false;S.sel=null;S.typed='';render()">↻ Retry Missed</button>`:""}
+        <button class="primary" onclick="newQuiz();render()">New Quiz →</button>
+      </div>
+    `;
+    return;
+  }
+
+  const q=S.q[S.n],ans=S.sel!==null;
+  if(q.mode==="listen"&&!ans&&!q.played){q.played=true;setTimeout(()=>speak(q.say),220)}
+
+  m.innerHTML=modeBar+`
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span class="hint">${esc(q.hint)}</span>
+      <span class="badge">${S.n+1} / ${S.q.length}</span>
+    </div>
+    <div class="duo-prog"><i style="width:${(S.n+(ans?1:0))/S.q.length*100}%"></i></div>
+
+    <div class="duo-card" style="cursor:default;min-height:160px">
+      <span class="badge neutral">${S.lvl} · ${LV[S.lvl]}</span>
+      ${q.mode==="listen"
+        ? `<div style="display:flex;gap:10px;margin:8px 0">
+             <button class="primary" style="font-size:24px;padding:12px 22px" onclick="speak(S.q[S.n].say)">🔊</button>
+             <button onclick="speak(S.q[S.n].say,0.58)">🐢 Slow</button>
+           </div>`
+        : `<div class="big-word">${esc(q.prompt)}</div>`
+      }
+    </div>
+
+    <input id="ans" class="text-quiz-input" placeholder="${esc(q.placeholder)}" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" value="${esc(ans?S.typed:"")}" ${ans?"disabled":""} onkeydown="if(event.key==='Enter')chk()">
+
+    ${ans?`
+      <div class="fb-sheet ${S.right?"":"wrong"}">
+        <div style="font-weight:900;font-size:15px;color:${S.right?"var(--ac)":"var(--tx-dark)"}">
+          ${S.right?"✓ Correct!":"✗ Correct answer:"}
+        </div>
+        <div style="font-weight:900;font-size:19px;margin-top:4px;color:var(--ac)">${esc(q.ans)}</div>
+      </div>
+    `:""}
+
+    <div class="row">
+      <button onclick="speak(S.q[S.n].say)">🔊 Hear</button>
+      ${ans
+        ? `<button class="primary" onclick="nx()">Continue →</button>`
+        : `<button class="outline-red" onclick="skipTextQ()">Skip</button>
+           <button class="primary" onclick="chk()">Check</button>`
+      }
+    </div>
+  `;
+}
+
+function qResult(ok){
+  const q=S.q[S.n];
+  S.right=ok;if(ok)S.score++;else (S.miss=S.miss||[]).push(q);
+  if(q.w)setP(q.w,ok);
+  if(q.say)speak(q.say);
+  render();
+}
+function chk(){
+  if(S.sel!==null)return nx();
+  const q=S.q[S.n];
+  const v=($("ans")?$("ans").value:"");
+  S.typed=v;S.sel=1;
+  qResult(norm(v)===norm(q.ans));
+}
+function skipTextQ(){if(S.sel!==null)return;S.typed="";S.sel=1;qResult(false)}
+function nx(){S.sel=null;S.typed="";S.n++;if(S.n>=S.q.length)S.done=true;render()}
+
+/* ===== 3. FULL 10-SCENARIO × 32-LINE SURVIVAL GUIDE ===== */
+let C={v:"browse",sc:null,li:0,play:false,sp:1,tr:"on",w:null,quizMode:null,quizIdx:0,quizScore:0,quizBuilt:[],quizPool:[]};
+
+function cine(m){
+  const ap=getActivePair();
+  const subBar=`
+    <div class="cats">
+      <button class="cat-chip ${C.v!=="vocab"?"on":""}" onclick="clearTimeout(window.CT);C.play=false;C.v='browse';render()">🧭 ${esc(ap.tgtName)} Guide (${SC.length} × 32 Lines)</button>
+      <button class="cat-chip ${C.v==="vocab"?"on":""}" onclick="clearTimeout(window.CT);C.play=false;C.v='vocab';render()">📒 Saved Words (${V.length})</button>
+    </div>
+  `;
+
+  if(C.v==="vocab"){
+    m.innerHTML=subBar+(V.length?V.map((v,i)=>`
+      <div class="box">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><b style="font-size:17px">${esc(v.w)}</b> — <span style="color:var(--ac);font-weight:800">${esc(v.tr)}</span></div>
+          <div style="display:flex;gap:6px">
+            <button class="sm" onclick="speak('${esc(v.w)}')">🔊</button>
+            <button class="sm" onclick="V.splice(${i},1);saveV();render()">🗑</button>
+          </div>
+        </div>
+        <div class="hint" style="margin-top:4px">“${esc(v.ex)}”</div>
+      </div>
+    `).join(""):`<div class="duo-card"><div class="hint">Tap any underlined word inside a Guide dialogue to save it here.</div></div>`);
+    return;
+  }
+
+  if(C.v==="browse"){
+    m.innerHTML=subBar+`
+      <div style="background:var(--ac);color:#ffffff;border:2px solid var(--ac-dark);border-bottom-width:5px;border-radius:20px;padding:16px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:11px;font-weight:900;opacity:.9;text-transform:uppercase">${esc(ap.label)}</div>
+          <div style="font-size:19px;font-weight:900">10 Real-Life Guides · 320 Lines</div>
+          <div style="font-size:12px;margin-top:3px">32 lines per scenario with audio &amp; 6-language bridge</div>
+        </div>
+        <span style="font-size:32px">${ap.flag}</span>
+      </div>
+      <div class="guide-grid">
+        ${SC.map(x=>{
+          const watched=ST.clips.includes(x.id);
+          return `<div class="guide-card" onclick="openSc(${x.id},0,0)">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:30px">${x.e}</span>
+              <span class="badge ${watched?"":"neutral"}">${watched?"✓ Completed":x.l}</span>
+            </div>
+            <b style="font-size:16px;color:var(--tx-dark)">${esc(x.t)}</b>
+            <div class="hint">${esc(x.sh)} · <b>${x.L.length} lines</b></div>
+            <div style="font-size:13px;font-weight:700;color:var(--ac)">“${esc(x.L[0][0])}”</div>
+          </div>`;
+        }).join("")}
+      </div>
+    `;
+    return;
+  }
+
+  const s=SC.find(x=>x.id===(C.sc&&C.sc.id))||C.sc;C.sc=s;const l=s.L[C.li];
+  const spk=(s.cast||["Speaker A","Speaker B"])[C.li%2];
+  m.innerHTML=subBar+`
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+      <button class="sm" onclick="clearTimeout(window.CT);C.play=false;C.v='browse';render()">← All 10 Guides</button>
+      <div style="display:flex;gap:6px">
+        <button class="sm ${!C.quizMode?"on":""}" onclick="C.quizMode=null;render()">🎬 32-Line Dialogue</button>
+        <button class="sm ${C.quizMode==="mashup"?"on":""}" onclick="startMashup()">🧩 Sentence Builder</button>
+      </div>
+    </div>
+
+    <div class="theater-box">
+      <div class="theater-top">
+        <span>${s.e} ${esc(spk)} · Line ${C.li+1}/${s.L.length}</span>
+        <span>${esc(s.t)}</span>
+      </div>
+      <div class="theater-stage">
+        <div style="font-size:20px;font-weight:900;color:var(--tx-dark);line-height:1.4">${wl(l[0])}</div>
+        ${C.tr!=="off"?`<div class="hint ${C.tr==="blur"?"blur-en":""}" style="margin-top:8px;font-size:14.5px" onclick="this.classList.remove('blur-en')">${esc(l[1])}</div>`:""}
+        ${renderIntertwinedBridge(l[2])}
+      </div>
+      <div style="padding:10px 12px;background:var(--surf-2);border-top:2px solid var(--bd);display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap">
+        <div style="display:flex;gap:6px">
+          <button class="sm" onclick="playLine(Math.max(0,C.li-1),false)">⏮</button>
+          <button class="sm primary" onclick="togglePlay()">${C.play?"⏸ Pause":"▶ Play All"}</button>
+          <button class="sm" onclick="playLine(Math.min(C.sc.L.length-1,C.li+1),false)">⏭</button>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="sm" onclick="C.sp=C.sp===1?0.7:1;render()">${C.sp===1?"1x":"🐢 0.7x"}</button>
+          <button class="sm" onclick="C.tr=C.tr==='on'?'blur':C.tr==='blur'?'off':'on';render()">${C.tr==="on"?"👁 Subtitles: On":C.tr==="blur"?"🙈 Blur":"🚫 Off"}</button>
+        </div>
+      </div>
+    </div>
+
+    ${C.w?renderWordDock():`<div class="hint" style="text-align:center;margin-bottom:8px">💡 Tap any underlined word for 6-language translation &amp; audio.</div>`}
+
+    ${C.quizMode==="mashup"?renderMashup():s.L.map((x,i)=>`
+      <div class="script-line ${i===C.li?"cur":""}" onclick="playLine(${i},false)">
+        <span class="badge ${i===C.li?"":"neutral"}">${i+1}</span>
+        <div style="flex:1">
+          <div style="font-weight:800;font-size:15px;color:var(--tx-dark)">${wl(x[0])}</div>
+          ${C.tr!=="off"?`<div class="hint ${C.tr==="blur"?"blur-en":""}">${esc(x[1])}</div>`:""}
+        </div>
+        <button class="sm" onclick="event.stopPropagation();playLine(${i},false)">🔊</button>
+      </div>
+    `).join("")}
+  `;
+}
+
+function renderWordDock(){
+  const w=C.w;
+  const info=smartLookup(w);
+  const saved=V.some(v=>v.w===w);
+  return `<div class="box" style="border-color:var(--ac)">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <b style="font-size:20px;color:var(--tx-dark)">${esc(w)}</b>
+        <div style="color:var(--ac);font-weight:800;font-size:14px">${esc(info?info.en:"Tap Save to add to study list")}</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="sm" onclick="speak('${esc(w)}')">🔊</button>
+        <button class="sm primary" onclick="saveClipWord()">${saved?"✓ Saved":"＋ Save"}</button>
+        <button class="sm" onclick="C.w=null;render()">✕</button>
+      </div>
+    </div>
+    ${info&&info.concept?renderIntertwinedBridge(info.concept):""}
+  </div>`;
+}
+
+function selW(w){C.w=w.toLowerCase();speak(w);render()}
+function saveClipWord(){
+  const w=C.w;if(!w||V.some(v=>v.w===w))return;
+  const info=smartLookup(w);
+  V.unshift({w,tr:info?info.en:C.sc.L[C.li][1],ex:C.sc.L[C.li][0],src:C.sc.t});
+  saveV();xp(2);render();
+}
+function openSc(id,i,auto){rebuildDictionary();C.sc=SC.find(x=>x.id===id);C.v="play";C.w=null;C.li=i||0;C.quizMode=null;render();if(auto)playLine(C.li,true)}
+function playLine(i,cont){
+  if(!ST.clips.includes(C.sc.id)){ST.clips.push(C.sc.id);saveST()}
+  clearTimeout(window.CT);
+  C.li=i;C.play=!!cont;render();
+  speak(C.sc.L[i][0],C.sp);
+  window.CT=setTimeout(()=>{
+    if(cont&&i+1<C.sc.L.length)playLine(i+1,true);
+    else{C.play=false;render()}
+  },(1400+C.sc.L[i][0].length*65)/C.sp);
+}
+function togglePlay(){
+  if(C.play){clearTimeout(window.CT);try{speechSynthesis.cancel()}catch(e){}C.play=false;render()}
+  else playLine(C.li>=C.sc.L.length?0:C.li,true);
+}
+function startMashup(){
+  C.quizMode="mashup";C.quizIdx=0;C.quizScore=0;C.quizBuilt=[];
+  C.quizPool=C.sc.L.slice(0,12).map(line=>{
+    const tokens=line[0].replace(/[.,!?;:„”"()¿¡]/g,"").split(/\s+/).filter(Boolean);
+    return{pl:line[0],en:line[1],tokens,shuffled:sh(tokens)};
+  });
+  render();
+}
+function renderMashup(){
+  if(C.quizIdx>=C.quizPool.length){
+    return `<div class="duo-card"><div class="big-word">🎉 ${C.quizScore} / ${C.quizPool.length}</div><div class="hint">Sentence Builder Complete!</div><button class="primary" onclick="C.quizMode=null;render()">Done</button></div>`;
+  }
+  const item=C.quizPool[C.quizIdx];
+  const built=C.quizBuilt.map(i=>item.shuffled[i]).join(" ");
+  const done=C.quizBuilt.length===item.shuffled.length;
+  const ok=done&&norm(built)===norm(item.tokens.join(" "));
+  return `<div class="box">
+    <div style="display:flex;justify-content:space-between"><b>🧩 Build the Sentence (${C.quizIdx+1}/${C.quizPool.length})</b><button class="sm" onclick="speak('${esc(item.pl)}')">🔊</button></div>
+    <div style="font-weight:800;margin-top:8px">“${esc(item.en)}”</div>
+    <div class="slot-box">
+      ${C.quizBuilt.length?C.quizBuilt.map((ti,pos)=>`<span class="chip" style="border-color:var(--ac);background:var(--ac-light)" onclick="C.quizBuilt.splice(${pos},1);render()">${esc(item.shuffled[ti])}</span>`).join(""):`<span class="hint">Tap words below in order…</span>`}
+    </div>
+    <div>${item.shuffled.map((tok,idx)=>`<span class="chip ${C.quizBuilt.includes(idx)?"used":""}" onclick="C.quizBuilt.push(${idx});render()">${esc(tok)}</span>`).join("")}</div>
+    ${done?`<div class="fb-sheet ${ok?"":"wrong"}"><b>${ok?"✓ Exact Match!":"✗ Expected: "+esc(item.pl)}</b></div>
+      <div class="row">${!ok?`<button onclick="C.quizBuilt=[];render()">↻ Retry</button>`:""}<button class="primary" onclick="if(${ok}){C.quizScore++;xp(3)}C.quizIdx++;C.quizBuilt=[];render()">Continue →</button></div>`
+    :`<div class="row"><button class="sm" onclick="C.quizBuilt=[];render()">Clear</button></div>`}
+  </div>`;
+}
+
+/* ===== 4. SUPER-SMART WEB-CONNECTED GEMINI AI TUTOR & KNOWLEDGE ENGINE ===== */
+let AI={
+  scenario:"smart",
+  input:"",
+  showEn:true,
+  webSearch:true,
+  msgs:[],
+  turn:0,
+  recording:false,
+  loading:false,
+  apiKey:safeStore.get("gemini-api-key")||"",
+  showKey:false
+};
+
+function initAiChat(force){
+  const ap=getActivePair();
+  const sc0=SC[0],sc2=SC[2],sc1=SC[1];
+  const openers={
+    smart:{
+      tgt:`${ap.greet} ${sc2.L[0][0]}`,
+      en:`${ap.greet} Ask me anything in ${ap.tgtName} or ${ap.srcName}! I search the live web (Wikipedia + Gemini AI) to answer any topic, grammar question, or roleplay.`,
+      tip:`🌐 Web-Connected AI Ready · Tap 🎙️ to speak or ask any question!`,
+      chips:[
+        `Explain grammar in ${ap.tgtName}`,
+        sc2.L[1][0],
+        `Tell me about Warsaw & Poland`
+      ]
+    },
+    cafe:{
+      tgt:sc2.L[0][0],
+      en:sc2.L[0][1],
+      tip:`☕ Restaurant Roleplay · Reply in ${ap.tgtName}!`,
+      chips:[sc2.L[1][0],sc2.L[4][0],sc2.L[15][0]]
+    },
+    travel:{
+      tgt:sc1.L[0][0],
+      en:sc1.L[0][1],
+      tip:`🚆 Train Station Roleplay · Reply in ${ap.tgtName}!`,
+      chips:[sc1.L[2][0],sc1.L[4][0],sc1.L[12][0]]
+    }
+  };
+  const op=openers[AI.scenario]||openers.smart;
+  if(force||!AI.msgs.length){
+    AI.turn=0;
+    AI.msgs=[{
+      role:"bot",
+      pl:op.tgt,
+      en:op.en,
+      tip:op.tip,
+      chips:op.chips,
+      sources:[]
+    }];
+  }
+}
+
+function toggleVoiceMic(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){
+    alert("Voice recognition is not supported in this browser. On iPhone use Safari, or type your message below.");
+    return;
+  }
+  if(AI.recording){
+    if(window._recObj)window._recObj.stop();
+    AI.recording=false;
+    render();
+    return;
+  }
+  const ap=getActivePair();
+  const rec=new SR();
+  window._recObj=rec;
+  rec.lang=ap.tgtCode||"pl-PL";
+  rec.interimResults=false;
+  rec.maxAlternatives=1;
+  AI.recording=true;
+  render();
+  rec.onresult=e=>{
+    const transcript=e.results[0][0].transcript;
+    AI.recording=false;
+    sendAiMsg(transcript);
+  };
+  rec.onerror=()=>{AI.recording=false;render()};
+  rec.onend=()=>{AI.recording=false;render()};
+  rec.start();
+}
+
+/* Live Web Search via Wikipedia & DuckDuckGo Instant Answer APIs (CORS-enabled, no API key required!) */
+async function fetchLiveWebKnowledge(query,langCode){
+  const sources=[];
+  let webContext="";
+  try{
+    const wikiUrl=`https://${langCode}.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*&srlimit=2`;
+    const r=await fetch(wikiUrl);
+    const j=await r.json();
+    const hits=j?.query?.search||[];
+    for(const h of hits){
+      const cleanSnip=h.snippet.replace(/<[^>]+>/g,"");
+      webContext+=`${h.title}: ${cleanSnip}\n`;
+      sources.push({title:h.title,url:`https://${langCode}.wikipedia.org/wiki/${encodeURIComponent(h.title.replace(/ /g,"_"))}`});
+    }
+  }catch(e){}
+
+  if(!webContext&&langCode!=="en"){
+    try{
+      const enUrl=`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&format=json&origin=*&srlimit=2`;
+      const r2=await fetch(enUrl);
+      const j2=await r2.json();
+      const hits2=j2?.query?.search||[];
+      for(const h of hits2){
+        const cleanSnip=h.snippet.replace(/<[^>]+>/g,"");
+        webContext+=`${h.title}: ${cleanSnip}\n`;
+        sources.push({title:h.title,url:`https://en.wikipedia.org/wiki/${encodeURIComponent(h.title.replace(/ /g,"_"))}`});
+      }
+    }catch(e){}
+  }
+  return{webContext:webContext.trim(),sources};
+}
+
+/* Free Web Translation API (MyMemory) for live multilingual synthesis */
+async function translateViaWeb(text,fromCode,toCode){
+  try{
+    const url=`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text.slice(0,380))}&langpair=${fromCode}|${toCode}`;
+    const r=await fetch(url);
+    const j=await r.json();
+    const tr=j?.responseData?.translatedText;
+    if(tr&&!tr.includes("MYMEMORY WARNING"))return tr;
+  }catch(e){}
+  return "";
+}
+
+async function generateSuperSmartReply(userRaw){
+  const ap=getActivePair();
+  const key=(AI.apiKey||"").trim();
+  const history=AI.msgs.slice(-6).map(m=>`${m.role==="usr"?"User":"Tutor"}: ${m.pl}`).join("\n");
+
+  // 1. Live Web Search Context
+  let webData={webContext:"",sources:[]};
+  if(AI.webSearch){
+    webData=await fetchLiveWebKnowledge(userRaw,ap.tgt);
+  }
+
+  // 2. Full Gemini 2.5 Flash + Google Search Grounding when API key is configured
+  if(key){
+    try{
+      const sysPrompt=`You are ${ap.coach}, an extraordinarily intelligent, witty, web-connected ${ap.tgtName} AI tutor and polyglot mentor helping a ${ap.srcName} speaker (${S.lvl} level).
+Conversation history:
+${history}
+Live web search context:
+${webData.webContext||"None"}
+
+User's latest message: "${userRaw}"
+
+Instructions:
+- Answer intelligently, accurately, and naturally in ${ap.tgtName} (2-3 clear, natural sentences). If the user asks a factual, cultural, travel, or grammar question in ANY language, answer it thoroughly in ${ap.tgtName} using live web facts!
+- Provide an accurate ${ap.srcName} translation of your reply.
+- Provide a smart, concise coaching/grammar/vocabulary insight in ${ap.srcName} (correcting any subtle mistakes gently if they wrote in ${ap.tgtName}).
+- Provide 3 smart, context-aware follow-up replies in ${ap.tgtName}.
+- Return ONLY valid JSON: {"replyTarget":"...","replySource":"...","coachingTip":"...","suggestions":["...","...","..."]}`;
+
+      let res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-preview:generateContent?key=${encodeURIComponent(key)}`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          contents:[{parts:[{text:sysPrompt}]}],
+          tools:[{google_search:{}}],
+          generationConfig:{temperature:0.65}
+        })
+      });
+      if(!res.ok){
+        res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(key)}`,{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({
+            contents:[{parts:[{text:sysPrompt}]}],
+            tools:[{google_search:{}}],
+            generationConfig:{temperature:0.65}
+          })
+        });
+      }
+      const data=await res.json();
+      const rawTxt=data?.candidates?.[0]?.content?.parts?.map(p=>p.text||"").join("")||"";
+      const groundingChunks=data?.candidates?.[0]?.groundingMetadata?.groundingChunks||[];
+      groundingChunks.forEach(gc=>{
+        if(gc.web?.uri&&gc.web?.title){
+          webData.sources.push({title:gc.web.title,url:gc.web.uri});
+        }
+      });
+
+      const jsonMatch=rawTxt.match(/\{[\s\S]*\}/);
+      if(jsonMatch){
+        const parsed=JSON.parse(jsonMatch[0]);
+        return{
+          pl:parsed.replyTarget||ap.greet,
+          en:parsed.replySource||"",
+          tip:parsed.coachingTip||"✨ Powered by Gemini + Live Google Search",
+          chips:Array.isArray(parsed.suggestions)?parsed.suggestions.slice(0,3):[],
+          sources:webData.sources.slice(0,3)
+        };
+      }
+    }catch(e){}
+  }
+
+  // 3. Keyless Web-Connected Smart Engine (Live Wikipedia + Live Web Translation + 5K Lexicon + 320 Scenario Lines)
+  const q=norm(userRaw);
+
+  // Check if user is asking to translate or explain a word/phrase
+  const matchedConcept=EXPANDED_CONCEPTS.find(c=>{
+    return ["pl","tr","en","fr","de","es"].some(code=>norm(c[code])===q||q.includes(" "+norm(c[code])+" "));
+  });
+
+  if(matchedConcept){
+    const tgtWord=matchedConcept[ap.tgt];
+    const srcWord=matchedConcept[ap.src];
+    const allLangs=["pl","tr","en","fr","de","es"].map(c=>`${LANG_META[c].flag} ${matchedConcept[c]}`).join(" · ");
+    return{
+      pl:`"${tgtWord}" — ${SC[0].L[2][0]}`,
+      en:`"${tgtWord}" means "${srcWord}" (${matchedConcept.cat}, Level ${matchedConcept.lv}).`,
+      tip:`🌐 Intertwined across all 6 languages: ${allLangs}`,
+      chips:[`Use "${tgtWord}" in a sentence`,SC[2].L[4][0],SC[1].L[0][0]],
+      sources:webData.sources.slice(0,2)
+    };
+  }
+
+  // If live Wikipedia returned knowledge for the user's topic, synthesize a bilingual web-grounded response!
+  if(webData.webContext){
+    const firstFact=webData.webContext.split("\n")[0].slice(0,220);
+    const tgtFact=await translateViaWeb(firstFact,ap.tgt==="en"?"en":"en",ap.tgt)||firstFact;
+    const srcFact=ap.src==="en"?firstFact:(await translateViaWeb(firstFact,"en",ap.src)||firstFact);
+    return{
+      pl:tgtFact,
+      en:srcFact,
+      tip:`🌐 Live Web Knowledge retrieved · Add a Gemini API key in ⚙️ for full generative reasoning!`,
+      chips:[SC[0].L[18][0],SC[2].L[4][0],SC[1].L[6][0]],
+      sources:webData.sources.slice(0,3)
+    };
+  }
+
+  // Semantic dialogue matching across all 320 scenario lines
+  const qToks=q.split(/\s+/).filter(t=>t.length>=3);
+  let bestNext=null,bestScore=0,bestScTitle="";
+  for(const ep of SC){
+    for(let i=0;i<ep.L.length;i++){
+      const lTgt=norm(ep.L[i][0]);
+      const lSrc=norm(ep.L[i][1]);
+      let score=0;
+      for(const tk of qToks){
+        if(lTgt.includes(tk))score+=3;
+        if(lSrc.includes(tk))score+=2;
+      }
+      if(score>bestScore){
+        bestScore=score;
+        bestNext=ep.L[(i+1)%ep.L.length];
+        bestScTitle=ep.t;
+      }
+    }
+  }
+
+  const activeSc=AI.scenario==="cafe"?SC[2]:AI.scenario==="travel"?SC[1]:SC[0];
+  AI.turn++;
+  const nextLine=bestScore>=3&&bestNext?bestNext:activeSc.L[(AI.turn*2)%activeSc.L.length];
+  const translatedUser=await translateViaWeb(userRaw,ap.src,ap.tgt);
+
+  return{
+    pl:nextLine[0],
+    en:nextLine[1],
+    tip:translatedUser&&norm(translatedUser)!==q
+      ? `💡 In ${ap.tgtName}: "${translatedUser}" · ${bestScTitle||"Conversational Practice"}`
+      : `✅ Great practice! Tap ⚙️ to connect a Gemini API key for unlimited AI reasoning.`,
+    chips:[
+      activeSc.L[(AI.turn*2+1)%activeSc.L.length][0],
+      activeSc.L[(AI.turn*2+3)%activeSc.L.length][0],
+      activeSc.L[(AI.turn*2+5)%activeSc.L.length][0]
+    ],
+    sources:[]
+  };
+}
+
+async function sendAiMsg(txt){
+  const msg=String(txt!==undefined?txt:AI.input).trim();
+  if(!msg||AI.loading)return;
+  initAiChat(false);
+  AI.msgs.push({role:"usr",pl:msg,en:""});
+  AI.input="";
+  AI.loading=true;
+  render();
+  setTimeout(()=>{const b=$("ai-msgs");if(b)b.scrollTop=b.scrollHeight},20);
+
+  const rep=await generateSuperSmartReply(msg);
+  AI.loading=false;
+  AI.msgs.push({
+    role:"bot",
+    pl:rep.pl,
+    en:rep.en,
+    tip:rep.tip,
+    chips:rep.chips||[],
+    sources:rep.sources||[]
+  });
+  xp(3);
+  render();
+  speak(rep.pl,0.92);
+  setTimeout(()=>{const b=$("ai-msgs");if(b)b.scrollTop=b.scrollHeight},40);
+}
+
+function ai(m){
+  const ap=getActivePair();
+  initAiChat(false);
+  const lastBot=[...AI.msgs].reverse().find(x=>x.role==="bot");
+  const chips=(lastBot&&lastBot.chips&&lastBot.chips.length)?lastBot.chips:[ap.greet];
+
+  m.innerHTML=`
+    <div class="cats">
+      <button class="cat-chip ${AI.scenario==="smart"?"on":""}" onclick="AI.scenario='smart';initAiChat(true);render()">🧠 Web AI Tutor</button>
+      <button class="cat-chip ${AI.scenario==="cafe"?"on":""}" onclick="AI.scenario='cafe';initAiChat(true);render()">☕ Café Roleplay</button>
+      <button class="cat-chip ${AI.scenario==="travel"?"on":""}" onclick="AI.scenario='travel';initAiChat(true);render()">🚆 Travel Roleplay</button>
+      <button class="cat-chip ${AI.webSearch?"on":""}" onclick="AI.webSearch=!AI.webSearch;render()">🌐 Web: ${AI.webSearch?"ON":"OFF"}</button>
+    </div>
+
+    ${AI.showKey?`
+      <div class="box" style="border-color:var(--ac)">
+        <b>🔑 Connect Gemini API Key (Google Search Grounded)</b>
+        <div class="hint">Paste your free Gemini API key (from aistudio.google.com) for full Gemini 3.1 Flash intelligence with live Google Search grounding. Even without a key, live Wikipedia + Web Translation are active!</div>
+        <input type="password" placeholder="AIzaSy..." value="${esc(AI.apiKey)}" oninput="AI.apiKey=this.value;safeStore.set('gemini-api-key',this.value)">
+        <div class="row"><button class="sm primary" onclick="AI.showKey=false;render()">Save &amp; Close</button></div>
+      </div>
+    `:""}
+
+    <div class="chat-box">
+      <div class="chat-hdr">
+        <div>
+          <div style="font-size:11px;font-weight:900;opacity:.9;text-transform:uppercase">${AI.apiKey?"✨ Gemini 3.1 + Live Google Search":"🌐 Live Web-Connected Tutor"} · ${esc(ap.short)}</div>
+          <div style="font-size:16px;font-weight:900">${ap.flag} ${esc(ap.coach)}</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="sm" style="background:#ffffff;color:var(--ac);border-color:var(--ac-dark)" onclick="AI.showEn=!AI.showEn;render()">${AI.showEn?"👁":"🙈"}</button>
+          <button class="sm" style="background:#ffffff;color:var(--tx-dark);border-color:var(--bd-dark)" onclick="AI.showKey=!AI.showKey;render()">⚙️</button>
+          <button class="sm" style="background:#ffffff;color:var(--tx-dark);border-color:var(--bd-dark)" onclick="initAiChat(true);render()">↻</button>
+        </div>
+      </div>
+
+      <div class="chat-msgs" id="ai-msgs">
+        ${AI.msgs.map(ms=>`
+          <div class="bubble ${ms.role}">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+              <div style="font-weight:800">${ms.role==="bot"?wl(ms.pl):esc(ms.pl)}</div>
+              <button class="sm" style="padding:4px 8px;font-size:12px;flex:none" onclick="speak('${esc(ms.pl)}',0.92)">🔊</button>
+            </div>
+            ${AI.showEn&&ms.en?`<div class="bubble-en">${esc(ms.en)}</div>`:""}
+            ${ms.tip?`<div class="bubble-tip">${esc(ms.tip)}</div>`:""}
+            ${ms.sources&&ms.sources.length?`
+              <div class="web-sources">
+                ${ms.sources.map(s=>`<a class="web-src-pill" href="${esc(s.url)}" target="_blank" rel="noopener">🔗 ${esc(s.title)}</a>`).join("")}
+              </div>
+            `:""}
+          </div>
+        `).join("")}
+        ${AI.loading?`<div class="bubble bot"><span class="hint">🌐 Searching web &amp; thinking in ${esc(ap.tgtName)}…</span></div>`:""}
+      </div>
+
+      <div class="chat-chips">
+        ${chips.filter(Boolean).map(ch=>`<button class="sm" style="white-space:nowrap" onclick="sendAiMsg('${esc(ch)}')">💬 ${esc(ch)}</button>`).join("")}
+      </div>
+
+      <div class="chat-bar">
+        <button class="sm mic-btn ${AI.recording?"rec":""}" onclick="toggleVoiceMic()" title="Speak in ${esc(ap.tgtName)}">${AI.recording?"⏹":"🎙️"}</button>
+        <input id="ai-in" placeholder="Ask anything or speak in ${esc(ap.tgtName)}…" value="${esc(AI.input)}" oninput="AI.input=this.value" onkeydown="if(event.key==='Enter')sendAiMsg()">
+        <button class="primary sm" onclick="sendAiMsg()">Send</button>
+      </div>
+    </div>
+  `;
+}
+
+/* ===== 5. 5,040-ENTRY INTERTWINED DICTIONARY TAB ===== */
+let DI={q:"",page:0,msg:"",plNew:"",enNew:"",lvlNew:"A1"};
+let NUM_VAL=2026;
+function setNumLab(v){
+  let n=parseInt(String(v).replace(/[^0-9]/g,""),10);
+  if(isNaN(n))n=0;
+  if(n>1000000)n=1000000;
+  NUM_VAL=n;
+  renderNumLab();
+}
+function renderNumLab(){
+  const el=$("num-lab-out");
+  if(!el)return;
+  const ap=getActivePair();
+  const tgtTxt=numToWords(NUM_VAL,ap.tgt);
+  const srcTxt=numToWords(NUM_VAL,ap.src);
+  el.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px">
+      <div>
+        <div style="font-size:18px;font-weight:900;color:var(--tx-dark)">${esc(tgtTxt)}</div>
+        <div class="hint">${esc(srcTxt)} (${NUM_VAL.toLocaleString("en-US")})</div>
+      </div>
+      <button class="sm primary" onclick="speak('${esc(tgtTxt)}',0.9)">Listen</button>
+    </div>
+    <div class="bridge-grid" style="justify-content:flex-start;margin-top:8px">
+      ${["pl","tr","en","fr","de","es"].map(c=>{
+        const w=numToWords(NUM_VAL,c);
+        return `<span class="bridge-pill" onclick="speak('${esc(w)}',0.9,'${LANG_META[c].speech}')">${LANG_META[c].flag} ${esc(w)}</span>`;
+      }).join("")}
+    </div>
+  `;
+}
+function wbk(m){
+  const ap=getActivePair();
+  const total=uniq().length;
+  m.innerHTML=`
+    <div class="box">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <b style="font-size:16px;color:var(--tx-dark)">Numbers Converter (0 – 1,000,000)</b>
+        <span class="badge">All 6 Languages</span>
+      </div>
+      <input type="number" min="0" max="1000000" inputmode="numeric" placeholder="Type any number 0 to 1,000,000…" value="${NUM_VAL}" oninput="setNumLab(this.value)">
+      <div class="num-presets">
+        ${[0,7,15,42,100,256,1000,1999,2026,10000,100000,1000000].map(v=>`<button class="sm" onclick="NUM_VAL=${v};render()">${v.toLocaleString("en-US")}</button>`).join("")}
+      </div>
+      <div id="num-lab-out"></div>
+    </div>
+
+    <div class="box">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <b style="font-size:16px;color:var(--tx-dark)">${esc(ap.short)} Lexicon &amp; Numbers</b>
+        <span class="badge">${total.toLocaleString()} entries</span>
+      </div>
+      <input id="dq" placeholder="Search ${esc(ap.tgtName)}, ${esc(ap.srcName)}, or any number…" value="${esc(DI.q)}" oninput="DI.q=this.value;DI.page=0;dsearch()">
+      <div class="hint" id="dm" style="margin-top:6px;color:var(--ac)">${esc(DI.msg)}</div>
+    </div>
+    <div id="dr"></div>
+
+    <div class="box" style="margin-top:12px">
+      <b style="font-size:16px;color:var(--tx-dark)">➕ Add Custom Word (${esc(ap.short)})</b>
+      <input placeholder="${esc(ap.tgtName)} word" value="${esc(DI.plNew)}" oninput="DI.plNew=this.value">
+      <input placeholder="${esc(ap.srcName)} translation" value="${esc(DI.enNew)}" oninput="DI.enNew=this.value">
+      <select onchange="DI.lvlNew=this.value">
+        <option value="A1" ${DI.lvlNew==="A1"?"selected":""}>A1 · Beginner</option>
+        <option value="A2" ${DI.lvlNew==="A2"?"selected":""}>A2 · Elementary</option>
+        <option value="B1" ${DI.lvlNew==="B1"?"selected":""}>B1 · Intermediate</option>
+      </select>
+      <div class="row"><button class="primary" onclick="addSingleWord()">Save Word</button></div>
+    </div>
+  `;
+  renderNumLab();
+  dsearch();
+}
+
+function dsearch(){
+  const rawQ=String(DI.q||"").trim();
+  const q=norm(rawQ),el=$("dr");if(!el)return;
+  const allU=uniq();
+  let filtered=q?allU.filter(w=>norm(w[0]).includes(q)||norm(w[2]).includes(q)):allU;
+  const numMatch=rawQ.replace(/[,\s]/g,"").match(/^\d+$/);
+  if(numMatch){
+    const n=Math.min(1000000,parseInt(numMatch[0],10));
+    const ap=getActivePair();
+    const c=buildNumberConcept(n);
+    const synth=[c[ap.tgt], "", c[ap.src], {concept:c, cat:"Numbers (0–1M)"}];
+    if(!filtered.some(w=>w[0]===synth[0])) filtered=[synth, ...filtered];
+  }
+  const pageSize=30;
+  const maxPage=Math.max(0,Math.ceil(filtered.length/pageSize)-1);
+  if(DI.page>maxPage)DI.page=maxPage;
+  const slice=filtered.slice(DI.page*pageSize,(DI.page+1)*pageSize);
+
+  el.innerHTML=`<div class="box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span class="hint">Showing ${slice.length} of ${filtered.length.toLocaleString()}</span>
+      <div style="display:flex;gap:6px">
+        <button class="sm" ${DI.page===0?"disabled":""} onclick="DI.page--;dsearch()">←</button>
+        <span class="badge neutral">${DI.page+1}/${maxPage+1}</span>
+        <button class="sm" ${DI.page>=maxPage?"disabled":""} onclick="DI.page++;dsearch()">→</button>
+      </div>
+    </div>
+    ${slice.map(w=>{
+      const c=w[3]?.concept;
+      return `<div class="stat-row" style="flex-direction:column;align-items:stretch">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <b style="font-size:16px;color:var(--tx-dark)">${esc(w[0])}</b>
+            <span style="color:var(--ac);font-weight:800;font-size:13px"> · ${esc(w[2])}</span>
+          </div>
+          <button class="sm" data-t="${esc(w[0])}" onclick="say(this)">🔊</button>
+        </div>
+        ${c?`<div class="bridge-grid" style="justify-content:flex-start;margin-top:4px">
+          ${["pl","tr","en","fr","de","es"].map(code=>`<span class="bridge-pill" style="font-size:11px;padding:2px 7px" onclick="speak('${esc(c[code])}',0.9,'${LANG_META[code].speech}')">${LANG_META[code].flag} ${esc(c[code])}</span>`).join("")}
+        </div>`:""}
+      </div>`;
+    }).join("")}
+  </div>`;
+}
+
+function addSingleWord(){
+  const pl=cl(DI.plNew,50);
+  const en=cl(DI.enNew,80);
+  if(!pl||!en){DI.msg="Please enter both words.";return render()}
+  PW.push({pl,pron:"",en,lvl:DI.lvlNew,cat:"My Words",pairId:CUR_PAIR});
+  savePW();rebuildDictionary();xp(2);
+  DI.plNew="";DI.enNew="";DI.msg=`✅ Added "${pl}"!`;
+  render();
+}
+
+/* ===== 6. ALL 30 BI-DIRECTIONAL LANGUAGE PAIRS TAB ===== */
+let LG={filter:"all"};
+
+function selectLanguagePair(pairId){
+  CUR_PAIR=pairId;
+  try{safeStore.set("app-lang-pair",pairId)}catch(e){}
+  loadPairState();
+  S.cat="All";S.i=0;S.flip=false;
+  AI.msgs=[];
+  clearTimeout(window.CT);
+  C.play=false;
+  C.w=null;
+  rebuildDictionary();
+  if(C.sc){
+    const prevId=C.sc.id;
+    C.sc=SC.find(x=>x.id===prevId)||SC[0];
+    C.li=Math.min(C.li,C.sc.L.length-1);
+  }
+  if(S.mode==="quiz")newQuiz();
+  render();
+}
+
+function langs(m){
+  const ap=getActivePair();
+  const pairs=Object.values(getAllPairs());
+  const filtered=LG.filter==="all"?pairs:pairs.filter(p=>p.src===LG.filter||p.tgt===LG.filter);
+
+  m.innerHTML=`
+    <div style="background:var(--ac);color:#ffffff;border:2px solid var(--ac-dark);border-bottom-width:5px;border-radius:20px;padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-size:11px;font-weight:900;opacity:.9;text-transform:uppercase">Full Bi-Directional Matrix</div>
+        <div style="font-size:19px;font-weight:900">All 30 Language Pairs</div>
+        <div style="font-size:12px;margin-top:3px">Active: <b>${esc(ap.label)}</b></div>
+      </div>
+      <button class="sm" style="background:#ffffff;color:var(--ac);border-color:var(--ac-dark)" onclick="swapOppositeLanguage()">⇄ Swap</button>
+    </div>
+
+    <div class="cats">
+      <button class="cat-chip ${LG.filter==="all"?"on":""}" onclick="LG.filter='all';render()">All 30 Pairs</button>
+      ${Object.values(LANG_META).map(lm=>`<button class="cat-chip ${LG.filter===lm.code?"on":""}" onclick="LG.filter='${lm.code}';render()">${lm.flag} ${lm.name}</button>`).join("")}
+    </div>
+
+    <div>
+      ${filtered.map(p=>{
+        const isAct=p.id===ap.id;
+        return `<div class="lang-card ${isAct?"active":""}" onclick="selectLanguagePair('${p.id}')">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="lang-flag-circle">${p.srcFlag||"🌐"}${p.flag||"🌐"}</div>
+            <div>
+              <b style="font-size:15px;color:var(--tx-dark)">${esc(p.label)}</b>
+              <div class="hint">${esc(p.short)} · 5,040 words · 10 Guides (320 lines)</div>
+            </div>
+          </div>
+          <button class="sm ${isAct?"primary":"outline-red"}">${isAct?"✓ Active":"Select"}</button>
+        </div>`;
+      }).join("")}
+    </div>
+  `;
+}
+
+/* ===== Stats & Mobile App Installation Guide ===== */
+function stats(m){
+  const ap=getActivePair();
+  const learned=Object.keys(S.prog).filter(k=>k!=="_xp"&&S.prog[k]>=2).length;
+  const total=Math.max(1,all().length);
+  const td=Math.floor((ST.d[dk(new Date())]||0)/60);
+  const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));return{l:"SMTWTFS"[d.getDay()],s:ST.d[dk(d)]||0}}),mx=Math.max(60,...days.map(x=>x.s));
+
+  m.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <b style="font-size:18px;color:var(--tx-dark)">📊 ${esc(ap.short)} Stats &amp; App Setup</b>
+      <button class="sm" onclick="go('learn')">← Learn</button>
+    </div>
+    <div class="tiles">
+      <div class="tile"><span class="hint">Words Mastered</span><b>${learned} / ${total.toLocaleString()}</b></div>
+      <div class="tile"><span class="hint">Total XP</span><b>${S.prog._xp||0} ⚡</b></div>
+      <div class="tile"><span class="hint">Daily Streak</span><b>${streak()} 🔥</b></div>
+      <div class="tile"><span class="hint">Studied Today</span><b>${td} min</b></div>
+    </div>
+    <div class="box">
+      <b>📱 Install as a Native App on iPhone &amp; Android</b>
+      <div class="stat-row">
+        <div>
+          <b>🍎 iPhone / iPad (Safari)</b>
+          <div class="hint">1. Open in <b>Safari</b>.<br>2. Tap the <b>Share icon (⎋)</b> at the bottom.<br>3. Tap <b>“Add to Home Screen”</b>.</div>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div>
+          <b>🤖 Android (Chrome)</b>
+          <div class="hint">1. Open in <b>Google Chrome</b>.<br>2. Tap the <b>three dots (⋮)</b> at the top right.<br>3. Tap <b>“Install App”</b> or <b>“Add to Home screen”</b>.</div>
+        </div>
+        ${DEFERRED_PROMPT?`<button class="sm primary" onclick="triggerAndroidInstall()">Install Now</button>`:""}
+      </div>
+    </div>
+    <div class="box">
+      <b>Last 7 Days Activity</b>
+      <div class="bars">${days.map(x=>`<div><i style="height:${x.s/mx*72}px"></i>${x.l}</div>`).join("")}</div>
+    </div>
+  `;
+}
+
+
+Object.assign(window,{
+  S,C,AI,DI,LG,V,PW,ST,LV,D,SC,LANG_META,LANG_PAIRS,
+  safeStore,go,render,selectLanguagePair,swapOppositeLanguage,
+  speak,say,newQuiz,chk,skipTextQ,nx,selW,saveClipWord,
+  openSc,playLine,togglePlay,startMashup,toggleVoiceMic,
+  sendAiMsg,dsearch,addSingleWord,triggerAndroidInstall,initAiChat,setNumLab,numToWords
+});
+
+/* ===== REVIEW TAB: spaced repetition + sentence builder + speaking ===== */
+let RV={t:"srs",q:[],i:0,rev:false,done:0,good:0,nw:0,sb:null,sbs:0,sp:null,spMsg:""};
+const srsKey=()=>"lp-srs-"+(CUR_PAIR||"en-pl"),dayK=()=>new Date().toISOString().slice(0,10);
+function srsMap(){try{return JSON.parse(localStorage.getItem(srsKey())||"{}")}catch(e){return{}}}
+function srsSave(m){try{localStorage.setItem(srsKey(),JSON.stringify(m))}catch(e){}}
+function lev(a,b){const d=[...Array(b.length+1).keys()];for(let i=1;i<=a.length;i++){let p=d[0];d[0]=i;for(let j=1;j<=b.length;j++){const t=d[j];d[j]=Math.min(d[j]+1,d[j-1]+1,p+(a[i-1]===b[j-1]?0:1));p=t}}return d[b.length]}
+function srsStart(){const m=srsMap(),idx=new Map(all().map(w=>[w[0],w])),now=Date.now();
+ const due=Object.keys(m).filter(k=>k[0]!=="_"&&m[k].d<=now&&idx.has(k)).map(k=>idx.get(k));
+ const used=(m._n&&m._n.t===dayK())?m._n.c:0,left=Math.max(0,10-used);
+ const nw=sh(P().filter(w=>!m[w[0]])).slice(0,left);
+ m._n={t:dayK(),c:used+nw.length};srsSave(m);
+ RV={...RV,q:[...sh(due),...nw],i:0,rev:false,done:0,good:0,nw:nw.length}}
+function srsGrade(g){const m=srsMap(),w=RV.q[RV.i],c=m[w[0]]||{i:0,e:2.5,r:0};
+ if(g===0){c.e=Math.max(1.3,c.e-.2);c.i=0;c.r=0;c.d=Date.now()+6e4;RV.q.push(w)}
+ else{c.r++;if(c.r===1)c.i=g===3?4:1;else if(c.r===2)c.i=g===1?2:g===3?6:3;else c.i=Math.max(1,Math.round(c.i*(g===1?1.2:c.e*(g===3?1.3:1))));if(g===3)c.e=Math.min(3,c.e+.15);c.d=Date.now()+c.i*864e5;RV.good++}
+ m[w[0]]=c;srsSave(m);setP(w,g>=2);RV.done++;RV.i++;RV.rev=false;render()}
+function srsView(){const w=RV.q[RV.i],m=srsMap(),dueLater=Object.keys(m).filter(k=>k[0]!=="_"&&m[k].d>Date.now()).length;
+ if(!w)return `<div class="duo-card" style="text-align:center"><div style="font-size:44px">🎉</div><b style="font-size:20px">${RV.done?"Session complete!":"Nothing due right now"}</b><div class="hint" style="margin:8px 0">${RV.done?`${RV.done} reviews · ${Math.round(RV.good/Math.max(1,RV.done)*100)}% remembered`:"Come back later, or pick another level or category to add new words."}</div><div class="hint">${dueLater} words scheduled for later</div><div style="margin-top:12px"><button class="cat-chip on" onclick="srsStart();render()">Check again</button></div></div>`;
+ const known=m[w[0]]&&m[w[0]].r>0,tot=RV.q.length;
+ return `<div class="hint" style="margin-bottom:6px">${RV.i+1} / ${tot} · ${known?"🔁 Review":"✨ New word"}</div><div class="duo-prog"><i style="width:${RV.i/tot*100}%"></i></div>
+ <div class="duo-card" style="text-align:center;cursor:pointer;margin-top:10px" onclick="if(!RV.rev){RV.rev=true;speak('${esc(w[0]).replace(/'/g,"")}',0.9);render()}">
+ <div class="hint">${esc(getActivePair().srcName)}</div><div style="font-size:28px;font-weight:800;margin:8px 0">${esc(w[2])}</div>
+ ${RV.rev?`<div style="border-top:1.5px solid var(--surf-2);padding-top:10px"><div style="font-size:30px;font-weight:800;color:var(--ac)">${esc(w[0])}</div>${w[1]?`<div class="hint">/${esc(w[1])}/</div>`:""}</div>`:`<div class="hint">Try to recall it, then tap to reveal</div>`}</div>
+ ${RV.rev?`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px">${[["Again","1 min"],["Hard","soon"],["Good","later"],["Easy","long"]].map((x,g)=>`<button class="cat-chip ${g===2?"on":""}" style="justify-content:center;padding:12px 4px;flex-direction:column" onclick="srsGrade(${g})">${x[0]}<small style="opacity:.7">${x[1]}</small></button>`).join("")}</div>`:""}`}
+/* Sentence builder */
+function sbNew(){const ls=SC.flatMap(s=>s.L).filter(l=>l[0]&&l[0].split(/\s+/).length>=3&&l[0].split(/\s+/).length<=9);if(!ls.length){RV.sb=null;return}
+ const l=sh(ls)[0],t=l[0].split(/\s+/);RV.sb={tr:l[1],t,bank:sh(t.map((x,i)=>i)),ans:[],ok:null}}
+function sbTap(i,fromAns){const b=RV.sb;if(b.ok!==null)return;if(fromAns){b.ans.splice(b.ans.indexOf(i),1);b.bank.push(i)}else{b.bank.splice(b.bank.indexOf(i),1);b.ans.push(i)}
+ if(!b.bank.length){b.ok=norm(b.ans.map(k=>b.t[k]).join(" "))===norm(b.t.join(" "));if(b.ok){xp(3);RV.sbs++;speak(b.t.join(" "),0.9)}}render()}
+function sbView(){const b=RV.sb;if(!b)return `<div class="duo-card"><div class="hint">No sentences available for this language pair yet. Open the Guide tab first.</div></div>`;
+ const chip=(i,f)=>`<button class="cat-chip" style="font-size:16px;padding:10px 12px" onclick="sbTap(${i},${f})">${esc(b.t[i])}</button>`;
+ return `<div class="hint">Streak of correct sentences: ${RV.sbs} 🔥</div><div class="duo-card" style="margin-top:8px"><div class="hint">Build this sentence:</div><div style="font-size:20px;font-weight:800;margin:6px 0 12px">${esc(b.tr)}</div>
+ <div style="min-height:56px;display:flex;flex-wrap:wrap;gap:6px;padding:10px;border:2px dashed var(--bd);border-radius:14px;${b.ok===true?"border-color:#16a34a;background:#f0fdf4":b.ok===false?"border-color:var(--ac)":""}">${b.ans.map(i=>chip(i,1)).join("")||'<span class="hint">Tap the words in order</span>'}</div>
+ ${b.ok===false?`<div class="hint" style="margin-top:8px;color:var(--ac)">Not quite. Correct: <b>${esc(b.t.join(" "))}</b></div>`:""}${b.ok===true?`<div class="hint" style="margin-top:8px;color:#16a34a"><b>Perfect! +3 XP</b></div>`:""}
+ <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px">${b.bank.map(i=>chip(i,0)).join("")}</div></div>
+ <div style="margin-top:12px;display:flex;gap:8px">${b.ok!==null?`<button class="cat-chip on" onclick="if(RV.sb.ok===false)RV.sbs=0;sbNew();render()">Next →</button>`:`<button class="cat-chip" onclick="RV.sb.bank=sh(RV.sb.t.map((x,i)=>i));RV.sb.ans=[];render()">Reset</button>`}<button class="cat-chip" onclick="speak(RV.sb.t.join(' '),0.9)">🔊 Hear it</button></div>`}
+/* Speaking practice */
+function spNew(){const p=P();RV.sp=p.length?sh(p)[0]:null;RV.spMsg=""}
+function spSay(){const SRc=window.SpeechRecognition||window.webkitSpeechRecognition,w=RV.sp;if(!SRc){RV.spMsg="Speech recognition is not available here. Try Safari or Chrome.";return render()}
+ const r=new SRc();r.lang=getActivePair().tgtCode||"pl-PL";r.interimResults=false;r.maxAlternatives=1;RV.spMsg="🎤 Listening…";render();
+ r.onresult=e=>{const t=e.results[0][0].transcript,a=norm(t),b=norm(w[0]),sc=Math.max(0,Math.round((1-lev(a,b)/Math.max(a.length,b.length,1))*100));
+  RV.spMsg=sc>=80?`✅ ${sc}% Great pronunciation! I heard “${esc(t)}”. +2 XP`:`🔁 ${sc}%. I heard “${esc(t)}”. Listen again and retry.`;if(sc>=80)xp(2);render()};
+ r.onerror=()=>{RV.spMsg="Could not hear you. Check the microphone permission and try again.";render()};r.start()}
+function spView(){const w=RV.sp;if(!w)return `<div class="duo-card"><div class="hint">No words available.</div></div>`;
+ return `<div class="duo-card" style="text-align:center"><div class="hint">Say this ${esc(getActivePair().tgtName)} word aloud</div><div style="font-size:34px;font-weight:800;color:var(--ac);margin:8px 0">${esc(w[0])}</div>${w[1]?`<div class="hint">/${esc(w[1])}/</div>`:""}<div style="font-size:18px;margin:6px 0">${esc(w[2])}</div><div style="margin:14px 0 6px;min-height:22px;font-weight:700">${RV.spMsg}</div>
+ <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="cat-chip" onclick="speak('${esc(w[0]).replace(/'/g,"")}',0.8)">🔊 Listen</button><button class="cat-chip on" onclick="spSay()">🎤 Say it</button><button class="cat-chip" onclick="spNew();render()">Next word →</button></div></div>`}
+function srs(m){
+ if(RV.t==="sb"&&!RV.sb)sbNew();if(RV.t==="sp"&&!RV.sp)spNew();
+ const mp=srsMap(),dueN=Object.keys(mp).filter(k=>k[0]!=="_"&&mp[k].d<=Date.now()).length;
+ m.innerHTML=`<div class="cats"><button class="cat-chip ${RV.t==="srs"?"on":""}" onclick="RV.t='srs';srsStart();render()">🔁 Smart Review${dueN?` (${dueN})`:""}</button><button class="cat-chip ${RV.t==="sb"?"on":""}" onclick="RV.t='sb';sbNew();render()">🧩 Sentences</button><button class="cat-chip ${RV.t==="sp"?"on":""}" onclick="RV.t='sp';spNew();render()">🎤 Speak</button></div>`+(RV.t==="srs"?srsView():RV.t==="sb"?sbView():spView())}
+
+function bootApp(){
+  try{
+    render();
+    var tip=document.getElementById('ios-quicklook-tip');
+    if(tip){tip.style.display='none';}
+  }catch(err){
+    var m=document.getElementById("main");
+    if(m){
+      m.innerHTML='<div class="box" style="border-color:#e51937"><b>⚠️ Safari Tip for iPhone</b><p class="hint">If you opened this file inside the iPhone Files preview, tap the <b>Share icon (⎋)</b> and choose <b>Open in Safari</b> for full audio, AI, and offline saving.</p><pre style="font-size:11px;white-space:pre-wrap;color:#777">'+String(err&&err.message||err)+'</pre></div>';
+    }
+  }
+}
+if(document.readyState==="loading"){
+  document.addEventListener("DOMContentLoaded",bootApp);
+}else{
+  bootApp();
+}
+</script>
+<script>if("serviceWorker" in navigator&&location.protocol.startsWith("http")){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}</script>
+</body>
+</html>

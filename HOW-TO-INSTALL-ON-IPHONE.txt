@@ -1,0 +1,19 @@
+POLYGLOT STUDIO on iPhone (installable web app, no App Store needed)
+
+Step 1 - Put the folder online (free, ~2 minutes). It must be an https:// address.
+  Easiest: Netlify Drop. Go to app.netlify.com/drop on a computer, create a free account,
+           and drag THIS WHOLE FOLDER onto the page. You get a link like https://your-name.netlify.app
+  Alternatives: GitHub Pages or Cloudflare Pages (upload these files, keep index.html at the top level).
+
+Step 2 - Install on the iPhone
+  1. Open the https:// link in SAFARI (not Chrome or another browser).
+  2. Tap the Share button (square with an arrow).
+  3. Tap "Add to Home Screen", then "Add".
+  4. Open "Polyglot" from your Home Screen. It runs full screen like a normal app.
+
+Notes
+  - Your progress is saved on the iPhone. If you delete the app icon, that data is deleted too.
+  - The app screens work offline after the first visit. Translation, Wikipedia and Gemini features need internet.
+  - The new Review tab (spaced repetition, sentence builder, speaking practice) is included. Voice input on iPhone works best in Safari. If the mic button does nothing from the Home Screen icon,
+    open the same link in Safari instead, or type your message.
+  - To update: upload the new files to the same place and open the app again (close it fully once if it still shows the old version).
